@@ -7,6 +7,12 @@ output:
     variant: markdown_github
 ---
 
+```{r,echo=FALSE}
+knitr::opts_chunk$set(comment='.')
+
+```
+
+
 # optimhelp
 
 ```{r}

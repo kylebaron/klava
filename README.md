@@ -12,21 +12,21 @@ p <- new_pars(cl,vc)
 p
 ```
 
-    ##    name value
-    ## CL   CL   1.2
-    ## VC   VC  22.3
+    .    name value
+    . CL   CL   1.2
+    . VC   VC  22.3
 
 ``` r
 start.values <- trans(p)
 start.values
 ```
 
-    ##        CL        VC 
-    ## 0.1823216 3.1045867
+    .        CL        VC 
+    . 0.1823216 3.1045867
 
 ``` r
 untrans(p,start.values)
 ```
 
-    ##   CL   VC 
-    ##  1.2 22.3
+    .   CL   VC 
+    .  1.2 22.3
