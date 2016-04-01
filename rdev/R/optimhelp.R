@@ -15,8 +15,8 @@ new_pars <- function(...) {
 ##'
 ##' @param x pars object
 ##' @export
-labels <- function(x) {
-  lapply(x, function(y) y$name) %>% unlist
+labels.pars <- function(x) {
+  unlist(lapply(x, function(y) y$name))
 }
 ##' Get parameter values.
 ##'
@@ -24,7 +24,7 @@ labels <- function(x) {
 ##' @export
 ##'
 values <- function(x) {
-  a <- lapply(x, function(y) y$value) %>% unlist
+  a <- unlist(lapply(x, function(y) y$value))
   names(a) <- labels(x)
   a
 }
@@ -47,6 +47,7 @@ trans <- function(p,x) {
 ##'
 ##' @param p pars object
 ##' @param x optional values vector with same length as p to untransform
+##' @export
 untrans <- function(p,x) {
   if(missing(x)) x <- values(p)
   stopifnot(length(x)==length(p))

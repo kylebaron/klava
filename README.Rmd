@@ -1,0 +1,43 @@
+---
+title: "optimhelp"
+author: "Kyle"
+date: "April 1, 2016"
+output: 
+  md_document:
+    variant: markdown_github
+---
+
+# optimhelp
+
+```{r}
+library(optimhelp)
+cl <- log_par("CL", 1.2)
+vc <- log_par("VC", 22.3)
+p <- new_pars(cl,vc)
+
+```
+
+
+
+```{r}
+p
+```
+
+```{r}
+start.values <- trans(p)
+start.values
+```
+
+
+```{r}
+untrans(p,start.values)
+```
+
+
+
+
+
+
+
+
+
