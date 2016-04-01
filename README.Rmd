@@ -55,6 +55,7 @@ head(data)
 ```
 
 ## Specify parameters
+We will restrict emax to be between 0 and 1 for now.
 ```{r}
 emax <- logit_par("emax", 0.6)
 ec50 <- log_par("ec50", 60)
