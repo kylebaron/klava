@@ -2,6 +2,8 @@ library(optimhelp)
 
 
 
+
+
 x <- runif(300,10,300)
 y <- 0.9*x/(100+x)*exp(rnorm(length(x),0,sqrt(0.05)))
 data <- data.frame(x=x,y=y)
