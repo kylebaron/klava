@@ -99,7 +99,12 @@ p
 Fit with `optim`
 ----------------
 
-In the `pred` function below 1. Graft the estimated proposed by the optimzer back into the `parlist` object \* By default, grafting untransforms all values in the `parlist` 1. Coerce to `list` so we can use to generate predictions
+In the `pred` function below
+
+1.  Graft the estimated proposed by the optimzer back into the `parlist` object
+    -   By default, grafting untransforms all values in the `parlist`
+
+2.  Coerce to `list` so we can use to generate predictions
 
 ``` r
 pred <- function(est,p, x) {
