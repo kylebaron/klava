@@ -5,13 +5,6 @@ optimhelp
 library(optimhelp)
 ```
 
-    . 
-    . Attaching package: 'optimhelp'
-
-    . The following object is masked from 'package:base':
-    . 
-    .     transform
-
 So far, this is a parameter management system. I can name and set initial values for parameters in a model. In this example, I can also specify a transformation for that parameter: the value is transformed to a different scale for estimation and it can be transformed back when either getting a prediction or after the optimization is finished.
 
 In this example, both `CL` and `VC` are estimated as log-transformed values.
