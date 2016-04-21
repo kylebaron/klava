@@ -95,10 +95,12 @@ fit <-optim(par=initials(p),fn=pred,p=p,x=x)
 
 est <- graft(p,fit$par)
 
-coef(est)
-
 est
 
+```
+A `coef` method will give just the non-fixed values
+```{r}
+coef(est)
 ```
 
 
@@ -121,6 +123,9 @@ est <- graft(p,coef(fit))
 coef(est)
 
 coef(fit)
+
+est
+
 ```
 
 

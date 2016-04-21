@@ -103,13 +103,6 @@ fit <-optim(par=initials(p),fn=pred,p=p,x=x)
 
 est <- graft(p,fit$par)
 
-coef(est)
-```
-
-    .       emax       ec50 
-    .  0.8801455 91.2968742
-
-``` r
 est
 ```
 
@@ -117,6 +110,15 @@ est
     .  emax    0.8801455  logit  u   
     .  ec50   91.2968742    log  u   
     .   yak 1234.0000000  ident  u  *
+
+A `coef` method will give just the non-fixed values
+
+``` r
+coef(est)
+```
+
+    .       emax       ec50 
+    .  0.8801455 91.2968742
 
 Fit with `nls`
 --------------
@@ -158,3 +160,12 @@ coef(fit)
 
     .     emax     ec50 
     . 1.993856 4.514081
+
+``` r
+est
+```
+
+    .  name        value transf tr fx
+    .  emax    0.8801505  logit  u   
+    .  ec50   91.2936089    log  u   
+    .   yak 1234.0000000  ident  u  *
