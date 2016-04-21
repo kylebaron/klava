@@ -2,60 +2,16 @@
   log(x/(1-x))
 }
 .alogit <- function(x) exp(x)/(1+exp(x))
+ident <- function(x) x
 
 ##' Create a new pars object.
 ##'
 ##' @param ... lists with parameter information
 ##' @export
 new_pars <- function(...) {
-  x <- list(...)
-  structure(x,class="pars")
-}
-##' Get parameter names.
-##'
-##' @param x pars object
-##' @export
-labels.pars <- function(x) {
-  unlist(lapply(x, function(y) y$name))
-}
-##' Get parameter values.
-##'
-##' @param x pars object
-##' @export
-##'
-values <- function(x) {
-  a <- unlist(lapply(x, function(y) y$value))
-  names(a) <- labels(x)
-  a
-}
-##' Transform parameter values.
-##'
-##' @param p pars object
-##' @param x optinal values vector of values with same length as p to transform
-##' @export
-##'
-trans <- function(p,x) {
-  if(missing(x)) x <- values(p)
-  stopifnot(length(x)==length(p))
-  b <- mapply(x,p, FUN=function(a,b) {
-    b$to(a)
-  })
-  names(b) <- labels(p)
-  b
-}
-##' Untransform parameter values.
-##'
-##' @param p pars object
-##' @param x optional values vector with same length as p to untransform
-##' @export
-untrans <- function(p,x) {
-  if(missing(x)) x <- values(p)
-  stopifnot(length(x)==length(p))
-  b <- mapply(x,p, FUN=function(a,b) {
-    b$from(a)
-  })
-  names(b) <- labels(p)
-  b
+  x <- new("parset", data=list(...))
+  names(x@data) <- names(x)
+  return(x)
 }
 
 ##' Create a list of log-transformed parameters.
@@ -64,8 +20,8 @@ untrans <- function(p,x) {
 ##' @param value the parameter value
 ##' @export
 ##'
-log_par <- function(name,value) {
-  list(name=name,value=value, to=log, from=exp)
+log_par <- function(name,value,...) {
+  new("logpar", name=name, value=value,fixed=FALSE)
 }
 ##' Create a list of logit-transformed parameters.
 ##'
@@ -73,16 +29,18 @@ log_par <- function(name,value) {
 ##' @param value the parameter value
 ##' @export
 ##'
-logit_par <- function(name,value) {
-  list(name=name,value=value,to=.logit,from=.alogit)
+logit_par <- function(name,value,fixed=FALSE,...) {
+  new("logitpar",name=name,value=value,fixed=FALSE)
 }
-##' Print the parameter list.
-##' @param x pars object
+##' Create a list of untransformed parameters.
 ##'
+##' @param name the parameter name
+##' @param value the parameter value
 ##' @export
 ##'
-print.pars <- function(x) {
-  print(data.frame(name=labels(x), value=values(x)))
+ident_par <- function(name,value,...) {
+  new("par", name=name, value=value,...)
 }
+
 
 

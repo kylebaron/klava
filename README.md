@@ -5,6 +5,13 @@ optimhelp
 library(optimhelp)
 ```
 
+    . 
+    . Attaching package: 'optimhelp'
+
+    . The following object is masked from 'package:base':
+    . 
+    .     transform
+
 So far, this is a parameter management system. I can name and set initial values for parameters in a model. In this example, I can also specify a transformation for that parameter: the value is transformed to a different scale for estimation and it can be transformed back when either getting a prediction or after the optimization is finished.
 
 In this example, both `CL` and `VC` are estimated as log-transformed values.
@@ -21,28 +28,29 @@ After making a `pars` object, we can look at it
 p
 ```
 
-    .    name value
-    . CL   CL   1.2
-    . VC   VC  22.3
+    .  name value transf tr fx
+    .    CL   1.2    log  u   
+    .    VC  22.3    log  u
 
 or transform the starting values to the estimation scale
 
 ``` r
-start.values <- trans(p)
+start.values <- initials(p)
 start.values
 ```
 
     .        CL        VC 
     . 0.1823216 3.1045867
 
-And transform back
+grafting back in gets us untransformed (by default)
 
 ``` r
-untrans(p,start.values)
+graft(p,start.values)
 ```
 
-    .   CL   VC 
-    .  1.2 22.3
+    .  name value transf tr fx
+    .    CL   1.2    log  u   
+    .    VC  22.3    log  u
 
 Examples
 ========
@@ -70,25 +78,27 @@ head(data)
 Specify parameters
 ------------------
 
-We will restrict emax to be between 0 and 1 for now.
+We will restrict emax to be between 0 and 1 for now. Also sending a fixed parameter through for fun
 
 ``` r
 emax <- logit_par("emax", 0.6)
 ec50 <- log_par("ec50", 60)
-p <- new_pars(emax,ec50)
+fx <- ident_par("yak", 1234, fixed=TRUE)
+p <- new_pars(emax,ec50,fx)
 p
 ```
 
-    .      name value
-    . emax emax   0.6
-    . ec50 ec50  60.0
+    .  name  value transf tr fx
+    .  emax    0.6  logit  u   
+    .  ec50   60.0    log  u   
+    .   yak 1234.0  ident  u  *
 
 Fit with `optim`
 ----------------
 
 ``` r
 pred <- function(est,p, x) {
-  est <- as.list(untrans(p,est))
+  est <- as.list(graft(p,est))
   yhat <- est$emax*x/(x+est$ec50)
   sqres <- (y-yhat)^2
   return(sum(sqres))
@@ -96,25 +106,27 @@ pred <- function(est,p, x) {
 
 
 
-fit <-optim(par=trans(p),fn=pred,p=p,x=x)
+fit <-optim(par=initials(p),fn=pred,p=p,x=x)
 
-untrans(p,fit$par)
+untrans(graft(p,fit$par))
 ```
 
-    .       emax       ec50 
-    .  0.8801455 91.2968742
+    .  name        value transf tr fx
+    .  emax    0.8801455  logit  u   
+    .  ec50   91.2968742    log  u   
+    .   yak 1234.0000000  ident  u  *
 
 Fit with `nls`
 --------------
 
 ``` r
 prednls <- function(p, x, emax,ec50) {
-  est <- as.list(untrans(p,c(emax=emax,ec50=ec50)))
+  est <- as.list(untrans(graft(p,c(emax=emax,ec50=ec50))))
   yhat <- est$emax*x/(x+est$ec50)
   return(yhat)
 }
 
-fit <- nls(y~prednls(p=p,x=x,emax,ec50),data=data, start=trans(p))
+fit <- nls(y~prednls(p=p,x=x,emax,ec50),data=data, start=initials(p))
 
 fit
 ```
@@ -130,8 +142,17 @@ fit
     . Achieved convergence tolerance: 2.305e-06
 
 ``` r
-untrans(p,coef(fit))
+est <- graft(p,coef(fit))
+
+coef(est)
 ```
 
     .       emax       ec50 
     .  0.8801505 91.2936089
+
+``` r
+coef(fit)
+```
+
+    .     emax     ec50 
+    . 1.993856 4.514081

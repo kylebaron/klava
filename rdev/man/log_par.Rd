@@ -4,7 +4,7 @@
 \alias{log_par}
 \title{Create a list of log-transformed parameters.}
 \usage{
-log_par(name, value)
+log_par(name, value, ...)
 }
 \arguments{
 \item{name}{the parameter name}

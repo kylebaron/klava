@@ -4,7 +4,7 @@
 \alias{logit_par}
 \title{Create a list of logit-transformed parameters.}
 \usage{
-logit_par(name, value)
+logit_par(name, value, fixed = FALSE, ...)
 }
 \arguments{
 \item{name}{the parameter name}
