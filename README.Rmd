@@ -38,13 +38,19 @@ After making a `pars` object, we can look at it
 p
 ```
 
-or transform the starting values to the estimation scale
+or see what the transformed values look like
+```{r}
+trans(p)
+```
+
+
+or generate initial values on the estimation scale
 ```{r}
 start.values <- initials(p)
 start.values
 ```
 
-grafting back in gets us untransformed (by default)
+Grafting back into the `parlist` object gets us untransformed (by default)
 ```{r}
 graft(p,start.values + 0.5)
 ```

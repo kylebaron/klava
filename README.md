@@ -25,7 +25,17 @@ p
     .    CL   1.2    log  u   
     .    VC  22.3    log  u
 
-or transform the starting values to the estimation scale
+or see what the transformed values look like
+
+``` r
+trans(p)
+```
+
+    .  name     value transf tr fx
+    .    CL 0.1823216    log  t   
+    .    VC 3.1045867    log  t
+
+or generate initial values on the estimation scale
 
 ``` r
 start.values <- initials(p)
@@ -35,7 +45,7 @@ start.values
     .        CL        VC 
     . 0.1823216 3.1045867
 
-grafting back in gets us untransformed (by default)
+Grafting back into the `parlist` object gets us untransformed (by default)
 
 ``` r
 graft(p,start.values + 0.5)
