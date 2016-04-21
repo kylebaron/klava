@@ -5,7 +5,7 @@ optimhelp
 library(optimhelp)
 ```
 
-So far, this is a parameter management system. I can name and set initial values for parameters in a model. In this example, I can also specify a transformation for that parameter: the value is transformed to a different scale for estimation and it can be transformed back when either getting a prediction or after the optimization is finished.
+So far, this is a **parameter management system**. I can name and set initial values for parameters in a model. I can also specify a transformation for each parameter: the value is transformed to a different scale for estimation and it can be transformed back when either getting a prediction or after the optimization is finished.
 
 In this example, both `CL` and `VC` are estimated as log-transformed values.
 
