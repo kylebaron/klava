@@ -93,7 +93,11 @@ pred <- function(est,p, x) {
 
 fit <-optim(par=initials(p),fn=pred,p=p,x=x)
 
-untrans(graft(p,fit$par))
+est <- graft(p,fit$par)
+
+coef(est)
+
+est
 
 ```
 

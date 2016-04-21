@@ -101,7 +101,16 @@ pred <- function(est,p, x) {
 
 fit <-optim(par=initials(p),fn=pred,p=p,x=x)
 
-untrans(graft(p,fit$par))
+est <- graft(p,fit$par)
+
+coef(est)
+```
+
+    .       emax       ec50 
+    .  0.8801455 91.2968742
+
+``` r
+est
 ```
 
     .  name        value transf tr fx
