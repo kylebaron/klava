@@ -38,12 +38,12 @@ start.values
 grafting back in gets us untransformed (by default)
 
 ``` r
-graft(p,start.values)
+graft(p,start.values + 0.5)
 ```
 
-    .  name value transf tr fx
-    .    CL   1.2    log  u   
-    .    VC  22.3    log  u
+    .  name     value transf tr fx
+    .    CL  1.978466    log  u   
+    .    VC 36.766484    log  u
 
 Examples
 ========

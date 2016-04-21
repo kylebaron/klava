@@ -46,7 +46,7 @@ start.values
 
 grafting back in gets us untransformed (by default)
 ```{r}
-graft(p,start.values)
+graft(p,start.values + 0.5)
 ```
 
 
