@@ -99,6 +99,8 @@ p
 Fit with `optim`
 ----------------
 
+In the `pred` function below 1. Graft the estimated proposed by the optimzer back into the `parlist` object \* By default, grafting untransforms all values in the `parlist` 1. Coerce to `list` so we can use to generate predictions
+
 ``` r
 pred <- function(est,p, x) {
   est <- as.list(graft(p,est))
@@ -110,7 +112,11 @@ pred <- function(est,p, x) {
 
 
 fit <-optim(par=initials(p),fn=pred,p=p,x=x)
+```
 
+After the fitting is done, graft the final estimates back into the `parlist` and take a look.
+
+``` r
 est <- graft(p,fit$par)
 
 est
@@ -129,6 +135,15 @@ coef(est)
 
     .       emax       ec50 
     .  0.8801455 91.2968742
+
+Otherwise, we can get everything like this
+
+``` r
+as.numeric(est)
+```
+
+    .         emax         ec50          yak 
+    .    0.8801455   91.2968742 1234.0000000
 
 Fit with `nls`
 --------------
