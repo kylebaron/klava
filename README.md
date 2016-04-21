@@ -113,9 +113,12 @@ pred <- function(est,p, x) {
   sqres <- (y-yhat)^2
   return(sum(sqres))
 }
+```
 
+1.  Use `initials` to transform the starting values at the start of the optimization
+2.  Pass the `parlist` object into the prediction function so we can graft the estimates back in
 
-
+``` r
 fit <-optim(par=initials(p),fn=pred,p=p,x=x)
 ```
 
