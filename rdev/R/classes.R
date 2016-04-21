@@ -12,10 +12,10 @@ setClass("logpar", contains="par")
 setClass("logitpar", contains="par")
 
 ##' @export
-setGeneric("transform", function(x,...) standardGeneric("transform"))
-setMethod("transform", "par", function(x,...) return("ident"))
-setMethod("transform", "logpar", function(x,...) return("log"))
-setMethod("transform", "logitpar", function(x,...) return("logit"))
+setGeneric("tform", function(x,...) standardGeneric("tform"))
+setMethod("tform", "par", function(x,...) return("ident"))
+setMethod("tform", "logpar", function(x,...) return("log"))
+setMethod("tform", "logitpar", function(x,...) return("logit"))
 
 
 
@@ -91,8 +91,8 @@ setMethod("names", "parset", function(x) {
     unlist(lapply(x@data, names))
 })
 
-setMethod("transform", "parset", function(x,...) {
-    as.character(sapply(x@data, transform))
+setMethod("tform", "parset", function(x,...) {
+    as.character(sapply(x@data, tform))
 })
 
 ##' @export
@@ -117,7 +117,7 @@ setMethod("show", "parset", function(object) {
     n <- names(object)
     v <- as.numeric(object)
     tr <- ifelse(get_trans(object), "t", "u")
-    transf <- transform(object)
+    transf <- tform(object)
     fx <- ifelse(estimated(object), "", "*")
     print(data.frame(name=n,value=v,transf = transf,tr=tr,fx=fx), row.names=FALSE)
 
