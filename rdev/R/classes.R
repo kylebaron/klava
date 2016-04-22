@@ -174,3 +174,7 @@ setMethod("coef", "parset", function(object,all=FALSE,...) {
 })
 
 
+##' @export
+setMethod("$", "parset", function(x,name){
+  unlist(valu(x@data[[name]]))
+})

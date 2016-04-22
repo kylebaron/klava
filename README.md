@@ -3,6 +3,7 @@ optimhelp
 
 ``` r
 library(optimhelp)
+library(ggplot2)
 ```
 
 So far, this is a **parameter management system**. I can name and set initial values for parameters in a model. I can also specify a transformation for each parameter: the value is transformed to a different scale for estimation and it can be transformed back when either getting a prediction or after the optimization is finished. Also, `parlist` objects allow you to fix parameters in the optimization.
@@ -77,18 +78,24 @@ Simulate some data
 set.seed(292)
 
 x <- runif(300,10,300)
-y <- 0.9*x/(100+x)*exp(rnorm(length(x),0,sqrt(0.05)))
+y <- (0.1 + 0.9*x/(100+x))*exp(rnorm(length(x),0,sqrt(0.025)))
 data <- data.frame(x=x,y=y)
 head(data)
 ```
 
     .           x         y
-    . 1 122.01323 0.6512473
-    . 2  83.96901 0.3334132
-    . 3 151.43117 0.4865623
-    . 4 109.99034 0.6853547
-    . 5 200.64816 0.5596619
-    . 6 259.40643 0.4126136
+    . 1 122.01323 0.7223047
+    . 2  83.96901 0.4407091
+    . 3 151.43117 0.5948464
+    . 4 109.99034 0.7444994
+    . 5 200.64816 0.6664930
+    . 6 259.40643 0.5438206
+
+``` r
+qplot(x,y,data=data, geom="point")
+```
+
+![](img/README-unnamed-chunk-10-1.png)<!-- -->
 
 Specify parameters
 ------------------
@@ -98,15 +105,15 @@ We will restrict emax to be between 0 and 1 for now. Also sending a fixed parame
 ``` r
 emax <- logit_par("emax", 0.6)
 ec50 <- log_par("ec50", 60)
-fx <- ident_par("yak", 1234, fixed=TRUE)
-p <- new_pars(emax,ec50,fx)
+e0 <- ident_par("e0", 0.1, fixed=TRUE)
+p <- new_pars(emax,ec50,e0)
 p
 ```
 
-    .  name  value transf tr fx
-    .  emax    0.6  logit  u   
-    .  ec50   60.0    log  u   
-    .   yak 1234.0  ident  u  *
+    .  name value transf tr fx
+    .  emax   0.6  logit  u   
+    .  ec50  60.0    log  u   
+    .    e0   0.1  ident  u  *
 
 Fit with `optim`
 ----------------
@@ -119,9 +126,10 @@ In the `pred` function below
 2.  Coerce to `list` so we can use to generate predictions
 
 ``` r
-pred <- function(est,p, x) {
+pred <- function(est,p, x,pred=FALSE) {
   est <- as.list(graft(p,est))
-  yhat <- est$emax*x/(x+est$ec50)
+  yhat <- est$e0 + est$emax*x/(x+est$ec50)
+  if(pred) return(yhat)
   sqres <- (y-yhat)^2
   return(sum(sqres))
 }
@@ -131,7 +139,7 @@ pred <- function(est,p, x) {
 2.  Pass the `parlist` object into the prediction function so we can graft the estimates back in
 
 ``` r
-fit <-optim(par=initials(p),fn=pred,p=p,x=x)
+fit <- optim(par=initials(p),fn=pred,p=p,x=x)
 ```
 
 Notice that, when we passed in the starting estimates, `optim` doesn't get exposed to any fixed parameter
@@ -151,10 +159,10 @@ est <- graft(p,fit$par)
 est
 ```
 
-    .  name        value transf tr fx
-    .  emax    0.8801455  logit  u   
-    .  ec50   91.2968742    log  u   
-    .   yak 1234.0000000  ident  u  *
+    .  name      value transf tr fx
+    .  emax  0.8767399  logit  u   
+    .  ec50 92.2259710    log  u   
+    .    e0  0.1000000  ident  u  *
 
 A `coef` method will give just the non-fixed values
 
@@ -163,7 +171,7 @@ coef(est)
 ```
 
     .       emax       ec50 
-    .  0.8801455 91.2968742
+    .  0.8767399 92.2259710
 
 Otherwise, we can get everything like this
 
@@ -171,16 +179,29 @@ Otherwise, we can get everything like this
 as.numeric(est)
 ```
 
-    .         emax         ec50          yak 
-    .    0.8801455   91.2968742 1234.0000000
+    .       emax       ec50         e0 
+    .  0.8767399 92.2259710  0.1000000
+
+Check things out
+
+``` r
+data$pred <- pred(initials(est),p,x,pred=TRUE)
+ggplot(data) + 
+geom_point(aes(x,y), col="darkslateblue") + 
+  geom_point(aes(x,pred), col="firebrick")
+```
+
+![](img/README-unnamed-chunk-18-1.png)<!-- -->
 
 Fit with `nls`
 --------------
 
+Here, we'll access values from the `parlist` object with `$`
+
 ``` r
-prednls <- function(p, x, emax,ec50) {
-  est <- as.list(untrans(graft(p,c(emax=emax,ec50=ec50))))
-  yhat <- est$emax*x/(x+est$ec50)
+prednls <- function(p, x, emax,ec50, pred=FALSE) {
+  est <- graft(p,c(emax=emax,ec50=ec50))
+  yhat <- est$e0 + est$emax*x/(x+est$ec50)
   return(yhat)
 }
 
@@ -193,11 +214,11 @@ fit
     .   model: y ~ prednls(p = p, x = x, emax, ec50)
     .    data: data
     .  emax  ec50 
-    . 1.994 4.514 
-    .  residual sum-of-squares: 4.214
+    . 1.962 4.524 
+    .  residual sum-of-squares: 2.897
     . 
     . Number of iterations to convergence: 4 
-    . Achieved convergence tolerance: 2.305e-06
+    . Achieved convergence tolerance: 2.248e-06
 
 ``` r
 est <- graft(p,coef(fit))
@@ -206,20 +227,20 @@ coef(est)
 ```
 
     .       emax       ec50 
-    .  0.8801505 91.2936089
+    .  0.8767128 92.2150708
 
 ``` r
 coef(fit)
 ```
 
     .     emax     ec50 
-    . 1.993856 4.514081
+    . 1.961663 4.524124
 
 ``` r
 est
 ```
 
-    .  name        value transf tr fx
-    .  emax    0.8801505  logit  u   
-    .  ec50   91.2936089    log  u   
-    .   yak 1234.0000000  ident  u  *
+    .  name      value transf tr fx
+    .  emax  0.8767128  logit  u   
+    .  ec50 92.2150708    log  u   
+    .    e0  0.1000000  ident  u  *

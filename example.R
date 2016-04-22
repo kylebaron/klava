@@ -22,7 +22,10 @@ ec503 <- log_par("ec503", 100)
 a3 <- ident_par("b3", 2.2, fixed=TRUE)
 
 
-p <- new_pars(emax,ec50,a2,emax2,ec502,a2,emax3,ec503,a3)
+p <- new_pars(emax,ec50,a)
+
+
+
 
 benchmark(
 graft(p,as.numeric(p)),

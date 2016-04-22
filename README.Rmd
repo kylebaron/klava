@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r,echo=FALSE}
-knitr::opts_chunk$set(comment='.')
+knitr::opts_chunk$set(comment='.',fig.path="img/README-")
 
 ```
 
@@ -17,6 +17,7 @@ knitr::opts_chunk$set(comment='.')
 
 ```{r}
 library(optimhelp)
+library(ggplot2)
 ```
 
 So far, this is  a __parameter management system__.  I can name and set initial values
@@ -75,11 +76,13 @@ graft(p,start.values + 0.5)
 set.seed(292)
 
 x <- runif(300,10,300)
-y <- 0.9*x/(100+x)*exp(rnorm(length(x),0,sqrt(0.05)))
+y <- (0.1 + 0.9*x/(100+x))*exp(rnorm(length(x),0,sqrt(0.025)))
 data <- data.frame(x=x,y=y)
 head(data)
 
+qplot(x,y,data=data, geom="point")
 ```
+
 
 ## Specify parameters
 We will restrict emax to be between 0 and 1 for now.  Also sending a fixed 
@@ -87,8 +90,8 @@ parameter through for fun
 ```{r}
 emax <- logit_par("emax", 0.6)
 ec50 <- log_par("ec50", 60)
-fx <- ident_par("yak", 1234, fixed=TRUE)
-p <- new_pars(emax,ec50,fx)
+e0 <- ident_par("e0", 0.1, fixed=TRUE)
+p <- new_pars(emax,ec50,e0)
 p
 
 ```
@@ -104,9 +107,10 @@ In the `pred` function below
   
 ```{r}
 
-pred <- function(est,p, x) {
+pred <- function(est,p, x,pred=FALSE) {
   est <- as.list(graft(p,est))
-  yhat <- est$emax*x/(x+est$ec50)
+  yhat <- est$e0 + est$emax*x/(x+est$ec50)
+  if(pred) return(yhat)
   sqres <- (y-yhat)^2
   return(sum(sqres))
 }
@@ -117,7 +121,7 @@ pred <- function(est,p, x) {
 1. Pass the `parlist` object into the prediction function so we can graft the estimates back in
 ```{r}
 
-fit <-optim(par=initials(p),fn=pred,p=p,x=x)
+fit <- optim(par=initials(p),fn=pred,p=p,x=x)
 ````
 
 Notice that, when we passed in the starting estimates, `optim` doesn't get exposed
@@ -145,11 +149,23 @@ as.numeric(est)
 ```
 
 
-## Fit with `nls`
+Check things out
 ```{r}
-prednls <- function(p, x, emax,ec50) {
-  est <- as.list(untrans(graft(p,c(emax=emax,ec50=ec50))))
-  yhat <- est$emax*x/(x+est$ec50)
+data$pred <- pred(initials(est),p,x,pred=TRUE)
+ggplot(data) + 
+geom_point(aes(x,y), col="darkslateblue") + 
+  geom_point(aes(x,pred), col="firebrick")
+```
+
+
+
+## Fit with `nls`
+
+Here, we'll access values from the `parlist` object with `$`
+```{r}
+prednls <- function(p, x, emax,ec50, pred=FALSE) {
+  est <- graft(p,c(emax=emax,ec50=ec50))
+  yhat <- est$e0 + est$emax*x/(x+est$ec50)
   return(yhat)
 }
 
