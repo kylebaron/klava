@@ -6,10 +6,11 @@ ident <- function(x) x
 
 ##' Create a new pars object.
 ##'
-##' @param ... lists with parameter information
+##' @param ... par objects
 ##' @export
 new_pars <- function(...) {
   x <- new("parset", data=list(...))
+  if(any(duplicated(names(x)))) stop("Duplicated parameter names.", call.=FALSE)
   names(x@data) <- names(x)
   return(x)
 }
@@ -18,6 +19,8 @@ new_pars <- function(...) {
 ##'
 ##' @param name the parameter name
 ##' @param value the parameter value
+##' @param fixed logical indicating whether the parameter should be fixed
+##' @param ... not used
 ##' @export
 ##'
 log_par <- function(name,value,...) {
@@ -27,6 +30,8 @@ log_par <- function(name,value,...) {
 ##'
 ##' @param name the parameter name
 ##' @param value the parameter value
+##' @param fixed logical indicating whether the parameter should be fixed
+##' @param ...
 ##' @export
 ##'
 logit_par <- function(name,value,fixed=FALSE,...) {
@@ -36,10 +41,11 @@ logit_par <- function(name,value,fixed=FALSE,...) {
 ##'
 ##' @param name the parameter name
 ##' @param value the parameter value
+##' @param fixed logical indicating whether the parameter should be fixed
 ##' @export
 ##'
-ident_par <- function(name,value,...) {
-  new("par", name=name, value=value,...)
+ident_par <- function(name,value,fixed=FALSE,...) {
+  new("par", name=name, value=value,fixed=fixed,...)
 }
 
 

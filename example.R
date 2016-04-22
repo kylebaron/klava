@@ -13,9 +13,22 @@ emax <- logit_par("emax", 0.9)
 ec50 <- log_par("ec50", 100)
 a <- ident_par("b", 2.2, fixed=TRUE)
 
-p <- new_pars(emax,ec50,a)
+emax2 <- logit_par("emax2", 0.9)
+ec502 <- log_par("ec502", 100)
+a2 <- ident_par("b2", 2.2, fixed=TRUE)
 
-p
+emax3 <- logit_par("emax3", 0.9)
+ec503 <- log_par("ec503", 100)
+a3 <- ident_par("b3", 2.2, fixed=TRUE)
+
+
+p <- new_pars(emax,ec50,a2,emax2,ec502,a2,emax3,ec503,a3)
+
+benchmark(
+graft(p,as.numeric(p)),
+graft(p,as.numeric(p)[1]),replications=1000)
+
+
 
 as.list(p)
 

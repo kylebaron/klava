@@ -10,6 +10,8 @@ setClass("par", slots=c(name="character", value="numeric", fixed="logical",trans
          prototype=list(trans=FALSE,fixed=FALSE))
 setClass("logpar", contains="par")
 setClass("logitpar", contains="par")
+setClass("parset", slots=c(data="list"))
+
 
 ##' @export
 setGeneric("tform", function(x,...) standardGeneric("tform"))
@@ -29,6 +31,9 @@ setMethod("update", "par", function(object,value,trans=TRUE...) {
 ##' @export
 setMethod("names", "par", function(x) x@name)
 
+##' Transform transformed parameters in a \code{parlist} object.
+##'
+##'
 ##' @export
 setGeneric("trans", function(x,...) standardGeneric("trans"))
 setMethod("trans", "par", function(x,...) return(x))
@@ -46,6 +51,9 @@ setMethod("trans", "logitpar", function(x,...) {
 
 })
 
+##' Untransform parameters in a \code{parlist} object.
+##'
+##'
 ##' @export
 setGeneric("untrans", function(x,...) standardGeneric("untrans"))
 setMethod("untrans", "par", function(x,...) return(x))
@@ -63,7 +71,7 @@ setMethod("untrans", "logitpar", function(x,...) {
   return(x)
 })
 
-setClass("parset", slots=c(data="list"))
+
 ##' @export
 setMethod("trans", "parset", function(x,...) {
     x@data <- lapply(x@data, trans)
@@ -95,6 +103,9 @@ setMethod("tform", "parset", function(x,...) {
     as.character(sapply(x@data, tform))
 })
 
+##' Generate initial estimates from a \code{parlist}.
+##'
+##'
 ##' @export
 setGeneric("initials", function(x,...) standardGeneric("initials"))
 setMethod("initials", "parset", function(x,...) {
@@ -123,16 +134,21 @@ setMethod("show", "parset", function(object) {
 
 })
 
+##' Graft new estimates into a \code{parlist} object.
+##'
+##' @param x a parlist object
+##' @param y named list or vector of estimates to graft into the parlist object
 ##' @export
-graft <-  function(x,what,untrans=TRUE,...) {
-  what <-unlist(what)
+##'
+graft <-  function(x,y,untrans=TRUE,...) {
+  y <-unlist(y)
 
-  if(!all(names(what) %in% names(x))) {
+  if(!all(names(y) %in% names(x))) {
     stop("Graft failed; could not find some parameters up for grafting.", call.=FALSE)
   }
 
-  for(nn in names(what)) {
-     x@data[[nn]] <- update(x@data[[nn]], value=what[nn],trans=TRUE)
+  for(nn in names(y)) {
+     x@data[[nn]] <- update(x@data[[nn]], value=y[nn],trans=TRUE)
   }
 
   if(untrans) x <- untrans(x)
@@ -140,7 +156,11 @@ graft <-  function(x,what,untrans=TRUE,...) {
   return(x)
 }
 
+##' Get estimated (non-fixed) values from a \code{parlist} object.
+##' @param all return non-fixed values too
+##' @param ... not used
 ##' @export
+##'
 setMethod("coef", "parset", function(object,all=FALSE,...) {
   a <- as.numeric(object)
   if(all) return(a)
