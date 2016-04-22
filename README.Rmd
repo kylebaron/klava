@@ -4,7 +4,7 @@ author: "Kyle"
 date: "April 1, 2016"
 output: 
   md_document:
-    variant: markdown_github
+  variant: markdown_github
 ---
 
 ```{r,echo=FALSE}
@@ -152,8 +152,9 @@ as.numeric(est)
 Check things out
 ```{r}
 data$pred <- pred(initials(est),p,x,pred=TRUE)
+
 ggplot(data) + 
-geom_point(aes(x,y), col="darkslateblue") + 
+  geom_point(aes(x,y),    col="darkslateblue") + 
   geom_point(aes(x,pred), col="firebrick")
 ```
 

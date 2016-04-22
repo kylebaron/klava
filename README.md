@@ -1,38 +1,34 @@
 optimhelp
 =========
 
-``` r
-library(optimhelp)
-library(ggplot2)
-```
+    library(optimhelp)
+    library(ggplot2)
 
-So far, this is a **parameter management system**. I can name and set initial values for parameters in a model. I can also specify a transformation for each parameter: the value is transformed to a different scale for estimation and it can be transformed back when either getting a prediction or after the optimization is finished. Also, `parlist` objects allow you to fix parameters in the optimization.
+So far, this is a **parameter management system**. I can name and set
+initial values for parameters in a model. I can also specify a
+transformation for each parameter: the value is transformed to a
+different scale for estimation and it can be transformed back when
+either getting a prediction or after the optimization is finished. Also,
+`parlist` objects allow you to fix parameters in the optimization.
 
-In this example, both `CL` and `VC` are estimated as log-transformed values.
+In this example, both `CL` and `VC` are estimated as log-transformed
+values.
 
-``` r
-cl <- log_par("CL", 1.2)
-vc <- log_par("VC", 22.3)
-```
+    cl <- log_par("CL", 1.2)
+    vc <- log_par("VC", 22.3)
 
-``` r
-cl
-```
+    cl
 
     .  name value transf tr fx
     .    CL   1.2    log  u
 
 Make a `parlist` object
 
-``` r
-p <- new_pars(cl,vc)
-```
+    p <- new_pars(cl,vc)
 
 The parlist object
 
-``` r
-p
-```
+    p
 
     .  name value transf tr fx
     .    CL   1.2    log  u   
@@ -40,9 +36,7 @@ p
 
 Check what the transformed values look like
 
-``` r
-trans(p)
-```
+    trans(p)
 
     .  name     value transf tr fx
     .    CL 0.1823216    log  t   
@@ -50,19 +44,16 @@ trans(p)
 
 or generate initial values on the estimation scale
 
-``` r
-start.values <- initials(p)
-start.values
-```
+    start.values <- initials(p)
+    start.values
 
     .        CL        VC 
     . 0.1823216 3.1045867
 
-Grafting back into the `parlist` object gets us untransformed (by default)
+Grafting back into the `parlist` object gets us untransformed (by
+default)
 
-``` r
-graft(p,start.values + 0.5)
-```
+    graft(p,start.values + 0.5)
 
     .  name     value transf tr fx
     .    CL  1.978466    log  u   
@@ -74,14 +65,12 @@ Examples
 Simulate some data
 ------------------
 
-``` r
-set.seed(292)
+    set.seed(292)
 
-x <- runif(300,10,300)
-y <- (0.1 + 0.9*x/(100+x))*exp(rnorm(length(x),0,sqrt(0.025)))
-data <- data.frame(x=x,y=y)
-head(data)
-```
+    x <- runif(300,10,300)
+    y <- (0.1 + 0.9*x/(100+x))*exp(rnorm(length(x),0,sqrt(0.025)))
+    data <- data.frame(x=x,y=y)
+    head(data)
 
     .           x         y
     . 1 122.01323 0.7223047
@@ -91,24 +80,21 @@ head(data)
     . 5 200.64816 0.6664930
     . 6 259.40643 0.5438206
 
-``` r
-qplot(x,y,data=data, geom="point")
-```
+    qplot(x,y,data=data, geom="point")
 
 ![](img/README-unnamed-chunk-10-1.png)<!-- -->
 
 Specify parameters
 ------------------
 
-We will restrict emax to be between 0 and 1 for now. Also sending a fixed parameter through for fun
+We will restrict emax to be between 0 and 1 for now. Also sending a
+fixed parameter through for fun
 
-``` r
-emax <- logit_par("emax", 0.6)
-ec50 <- log_par("ec50", 60)
-e0 <- ident_par("e0", 0.1, fixed=TRUE)
-p <- new_pars(emax,ec50,e0)
-p
-```
+    emax <- logit_par("emax", 0.6)
+    ec50 <- log_par("ec50", 60)
+    e0 <- ident_par("e0", 0.1, fixed=TRUE)
+    p <- new_pars(emax,ec50,e0)
+    p
 
     .  name value transf tr fx
     .  emax   0.6  logit  u   
@@ -120,44 +106,45 @@ Fit with `optim`
 
 In the `pred` function below
 
-1.  Graft the estimated proposed by the optimzer back into the `parlist` object
+1.  Graft the estimated proposed by the optimzer back into the `parlist`
+    object
     -   By default, grafting untransforms all values in the `parlist`
 
 2.  Coerce to `list` so we can use to generate predictions
 
-``` r
-pred <- function(est,p, x,pred=FALSE) {
-  est <- as.list(graft(p,est))
-  yhat <- est$e0 + est$emax*x/(x+est$ec50)
-  if(pred) return(yhat)
-  sqres <- (y-yhat)^2
-  return(sum(sqres))
-}
-```
+<!-- -->
 
-1.  Use `initials` to transform the starting values at the start of the optimization
-2.  Pass the `parlist` object into the prediction function so we can graft the estimates back in
+    pred <- function(est,p, x,pred=FALSE) {
+      est <- as.list(graft(p,est))
+      yhat <- est$e0 + est$emax*x/(x+est$ec50)
+      if(pred) return(yhat)
+      sqres <- (y-yhat)^2
+      return(sum(sqres))
+    }
 
-``` r
-fit <- optim(par=initials(p),fn=pred,p=p,x=x)
-```
+1.  Use `initials` to transform the starting values at the start of the
+    optimization
+2.  Pass the `parlist` object into the prediction function so we can
+    graft the estimates back in
 
-Notice that, when we passed in the starting estimates, `optim` doesn't get exposed to any fixed parameter
+<!-- -->
 
-``` r
-initials(p)
-```
+    fit <- optim(par=initials(p),fn=pred,p=p,x=x)
+
+Notice that, when we passed in the starting estimates, `optim` doesn't
+get exposed to any fixed parameter
+
+    initials(p)
 
     .      emax      ec50 
     . 0.4054651 4.0943446
 
-After the fitting is done, graft the final estimates back into the `parlist` and take a look.
+After the fitting is done, graft the final estimates back into the
+`parlist` and take a look.
 
-``` r
-est <- graft(p,fit$par)
+    est <- graft(p,fit$par)
 
-est
-```
+    est
 
     .  name      value transf tr fx
     .  emax  0.8767399  logit  u   
@@ -166,30 +153,25 @@ est
 
 A `coef` method will give just the non-fixed values
 
-``` r
-coef(est)
-```
+    coef(est)
 
     .       emax       ec50 
     .  0.8767399 92.2259710
 
 Otherwise, we can get everything like this
 
-``` r
-as.numeric(est)
-```
+    as.numeric(est)
 
     .       emax       ec50         e0 
     .  0.8767399 92.2259710  0.1000000
 
 Check things out
 
-``` r
-data$pred <- pred(initials(est),p,x,pred=TRUE)
-ggplot(data) + 
-geom_point(aes(x,y), col="darkslateblue") + 
-  geom_point(aes(x,pred), col="firebrick")
-```
+    data$pred <- pred(initials(est),p,x,pred=TRUE)
+
+    ggplot(data) + 
+      geom_point(aes(x,y),    col="darkslateblue") + 
+      geom_point(aes(x,pred), col="firebrick")
 
 ![](img/README-unnamed-chunk-18-1.png)<!-- -->
 
@@ -198,17 +180,15 @@ Fit with `nls`
 
 Here, we'll access values from the `parlist` object with `$`
 
-``` r
-prednls <- function(p, x, emax,ec50, pred=FALSE) {
-  est <- graft(p,c(emax=emax,ec50=ec50))
-  yhat <- est$e0 + est$emax*x/(x+est$ec50)
-  return(yhat)
-}
+    prednls <- function(p, x, emax,ec50, pred=FALSE) {
+      est <- graft(p,c(emax=emax,ec50=ec50))
+      yhat <- est$e0 + est$emax*x/(x+est$ec50)
+      return(yhat)
+    }
 
-fit <- nls(y~prednls(p=p,x=x,emax,ec50),data=data, start=initials(p))
+    fit <- nls(y~prednls(p=p,x=x,emax,ec50),data=data, start=initials(p))
 
-fit
-```
+    fit
 
     . Nonlinear regression model
     .   model: y ~ prednls(p = p, x = x, emax, ec50)
@@ -220,25 +200,19 @@ fit
     . Number of iterations to convergence: 4 
     . Achieved convergence tolerance: 2.248e-06
 
-``` r
-est <- graft(p,coef(fit))
+    est <- graft(p,coef(fit))
 
-coef(est)
-```
+    coef(est)
 
     .       emax       ec50 
     .  0.8767128 92.2150708
 
-``` r
-coef(fit)
-```
+    coef(fit)
 
     .     emax     ec50 
     . 1.961663 4.524124
 
-``` r
-est
-```
+    est
 
     .  name      value transf tr fx
     .  emax  0.8767128  logit  u   
