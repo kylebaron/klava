@@ -122,6 +122,15 @@ pred <- function(est,p, x) {
 fit <-optim(par=initials(p),fn=pred,p=p,x=x)
 ```
 
+Notice that, when we passed in the starting estimates, `optim` doesn't get exposed to any fixed parameter
+
+``` r
+initials(p)
+```
+
+    .      emax      ec50 
+    . 0.4054651 4.0943446
+
 After the fitting is done, graft the final estimates back into the `parlist` and take a look.
 
 ``` r
