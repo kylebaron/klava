@@ -28,17 +28,27 @@ In this example, both `CL` and `VC` are estimated as log-transformed values.
 ```{r}
 cl <- log_par("CL", 1.2)
 vc <- log_par("VC", 22.3)
-p <- new_pars(cl,vc)
 
 ```
 
+```{r}
+cl
+```
 
-After making a `pars` object, we can look at it
+
+
+Make a `parlist` object
+```{r}
+p <- new_pars(cl,vc)
+```
+
+
+The parlist object
 ```{r}
 p
 ```
 
-or see what the transformed values look like
+Check what the transformed values look like
 ```{r}
 trans(p)
 ```

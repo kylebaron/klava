@@ -10,6 +10,10 @@ log_par(name, value, ...)
 \item{name}{the parameter name}
 
 \item{value}{the parameter value}
+
+\item{...}{not used}
+
+\item{fixed}{logical indicating whether the parameter should be fixed}
 }
 \description{
 Create a list of log-transformed parameters.

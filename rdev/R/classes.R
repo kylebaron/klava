@@ -134,6 +134,12 @@ setMethod("show", "parset", function(object) {
 
 })
 
+
+##' @export
+setMethod("show", "par", function(object) {
+  print(new_pars(object))
+})
+
 ##' Graft new estimates into a \code{parlist} object.
 ##'
 ##' @param x a parlist object

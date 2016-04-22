@@ -7,7 +7,7 @@
 new_pars(...)
 }
 \arguments{
-\item{...}{lists with parameter information}
+\item{...}{par objects}
 }
 \description{
 Create a new pars object.

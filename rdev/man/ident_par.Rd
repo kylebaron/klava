@@ -4,12 +4,16 @@
 \alias{ident_par}
 \title{Create a list of untransformed parameters.}
 \usage{
-ident_par(name, value, ...)
+ident_par(name, value, fixed = FALSE, ...)
 }
 \arguments{
 \item{name}{the parameter name}
 
 \item{value}{the parameter value}
+
+\item{fixed}{logical indicating whether the parameter should be fixed}
+
+\item{...}{not used}
 }
 \description{
 Create a list of untransformed parameters.

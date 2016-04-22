@@ -8,6 +8,7 @@ ident <- function(x) x
 ##'
 ##' @param ... par objects
 ##' @export
+##'
 new_pars <- function(...) {
   x <- new("parset", data=list(...))
   if(any(duplicated(names(x)))) stop("Duplicated parameter names.", call.=FALSE)
@@ -31,17 +32,19 @@ log_par <- function(name,value,...) {
 ##' @param name the parameter name
 ##' @param value the parameter value
 ##' @param fixed logical indicating whether the parameter should be fixed
-##' @param ...
+##' @param ... not used
 ##' @export
 ##'
 logit_par <- function(name,value,fixed=FALSE,...) {
   new("logitpar",name=name,value=value,fixed=FALSE)
 }
+
 ##' Create a list of untransformed parameters.
 ##'
 ##' @param name the parameter name
 ##' @param value the parameter value
 ##' @param fixed logical indicating whether the parameter should be fixed
+##' @param ... not used
 ##' @export
 ##'
 ident_par <- function(name,value,fixed=FALSE,...) {
