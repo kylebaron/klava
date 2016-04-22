@@ -22,7 +22,7 @@ library(optimhelp)
 So far, this is  a __parameter management system__.  I can name and set initial values
 for parameters in a model.  I can also specify a transformation
 for each parameter: the value is transformed to a different scale for estimation and 
-it can be transformed back when either getting a prediction or after the optimization is finished.  
+it can be transformed back when either getting a prediction or after the optimization is finished.  Also, `parlist` objects allow you to fix parameters in the optimization.
 
 In this example, both `CL` and `VC` are estimated as log-transformed values.
 ```{r}
