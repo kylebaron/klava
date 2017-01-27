@@ -1,9 +1,9 @@
 SHELL := /bin/bash
 LIBDIR=/Users/kyleb/Rlibs/lib
 PACKAGE=optimhelp
-VERSION=$(shell grep Version rdev/DESCRIPTION |awk '{print $$2}')
+VERSION=$(shell grep Version DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
-PKGDIR=rdev/
+PKGDIR=.
 CHKDIR=.
 
 ## Set libPaths:
@@ -19,7 +19,7 @@ all:
 
 .PHONY: doc
 doc:
-	Rscript -e 'library(devtools); document("rdev")'
+	Rscript -e 'library(devtools); document()'
 
 build:
 	R CMD build --md5 $(PKGDIR)
