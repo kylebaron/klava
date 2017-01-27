@@ -1,15 +1,30 @@
 optimhelp
 =========
 
+Installation
+------------
+
+    devtools:::install_github("kylebaron/optimhelp")
+
+    . Downloading GitHub repo kylebaron/optimhelp@master
+    . from URL https://api.github.com/repos/kylebaron/optimhelp/zipball/master
+
+    . Installing optimhelp
+
+    . '/Library/Frameworks/R.framework/Resources/bin/R' CMD INSTALL '/private/var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T/RtmpoJGcLi/devtools913b958d5d4/kylebaron-optimhelp-6036a88'
+
+Use
+---
+
     library(optimhelp)
     library(ggplot2)
 
-So far, this is a **parameter management system**. I can name and set
-initial values for parameters in a model. I can also specify a
+So far, this is a **parameter management system**. We can name and set
+initial values for parameters in a model. We can also specify a
 transformation for each parameter: the value is transformed to a
 different scale for estimation and it can be transformed back when
 either getting a prediction or after the optimization is finished. Also,
-`parlist` objects allow you to fix parameters in the optimization.
+`parset` objects allow you to fix parameters in the optimization.
 
 In this example, both `CL` and `VC` are estimated as log-transformed
 values.
@@ -22,11 +37,11 @@ values.
     .  name value transf tr fx
     .    CL   1.2    log  u
 
-Make a `parlist` object
+Make a `parset` object
 
-    p <- new_pars(cl,vc)
+    p <- parset(cl,vc)
 
-The parlist object
+The `parset` object
 
     p
 
@@ -50,7 +65,7 @@ or generate initial values on the estimation scale
     .        CL        VC 
     . 0.1823216 3.1045867
 
-Grafting back into the `parlist` object gets us untransformed (by
+Grafting back into the `parset` object gets us untransformed (by
 default)
 
     graft(p,start.values + 0.5)
@@ -82,7 +97,7 @@ Simulate some data
 
     qplot(x,y,data=data, geom="point")
 
-![](img/README-unnamed-chunk-10-1.png)<!-- -->
+![](img/README-unnamed-chunk-11-1.png)
 
 Specify parameters
 ------------------
@@ -93,7 +108,7 @@ fixed parameter through for fun
     emax <- logit_par("emax", 0.6)
     ec50 <- log_par("ec50", 60)
     e0 <- ident_par("e0", 0.1, fixed=TRUE)
-    p <- new_pars(emax,ec50,e0)
+    p <- parset(emax,ec50,e0)
     p
 
     .  name value transf tr fx
@@ -106,9 +121,9 @@ Fit with `optim`
 
 In the `pred` function below
 
-1.  Graft the estimated proposed by the optimzer back into the `parlist`
+1.  Graft the estimated proposed by the optimzer back into the `parset`
     object
-    -   By default, grafting untransforms all values in the `parlist`
+    -   By default, grafting untransforms all values in the `parset`
 
 2.  Coerce to `list` so we can use to generate predictions
 
@@ -124,7 +139,7 @@ In the `pred` function below
 
 1.  Use `initials` to transform the starting values at the start of the
     optimization
-2.  Pass the `parlist` object into the prediction function so we can
+2.  Pass the `parset` object into the prediction function so we can
     graft the estimates back in
 
 <!-- -->
@@ -140,7 +155,7 @@ get exposed to any fixed parameter
     . 0.4054651 4.0943446
 
 After the fitting is done, graft the final estimates back into the
-`parlist` and take a look.
+`parset` and take a look.
 
     est <- graft(p,fit$par)
 
@@ -173,12 +188,12 @@ Check things out
       geom_point(aes(x,y),    col="darkslateblue") + 
       geom_point(aes(x,pred), col="firebrick")
 
-![](img/README-unnamed-chunk-18-1.png)<!-- -->
+![](img/README-unnamed-chunk-19-1.png)
 
 Fit with `nls`
 --------------
 
-Here, we'll access values from the `parlist` object with `$`
+Here, we'll access values from the `parset` object with `$`
 
     prednls <- function(p, x, emax,ec50, pred=FALSE) {
       est <- graft(p,c(emax=emax,ec50=ec50))
