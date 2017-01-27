@@ -4,7 +4,7 @@ PACKAGE=optimhelp
 VERSION=$(shell grep Version rdev/DESCRIPTION |awk '{print $$2}')
 TARBALL=${PACKAGE}_${VERSION}.tar.gz
 PKGDIR=rdev/
-CHKDIR=Rchecks
+CHKDIR=.
 
 ## Set libPaths:
 export R_LIBS=${LIBDIR}

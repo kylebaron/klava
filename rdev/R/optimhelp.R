@@ -1,3 +1,7 @@
+##' @importFrom methods new
+##' @importFrom stats setNames
+##' @import methods
+
 .logit <- function(x) {
   log(x/(1-x))
 }
@@ -9,7 +13,7 @@ ident <- function(x) x
 ##' @param ... par objects
 ##' @export
 ##'
-new_pars <- function(...) {
+parset <- function(...) {
   x <- new("parset", data=list(...))
   if(any(duplicated(names(x)))) stop("Duplicated parameter names.", call.=FALSE)
   names(x@data) <- names(x)
@@ -20,36 +24,51 @@ new_pars <- function(...) {
 ##'
 ##' @param name the parameter name
 ##' @param value the parameter value
-##' @param fixed logical indicating whether the parameter should be fixed
-##' @param ... not used
+##' @param ... passed to constructor
 ##' @export
 ##'
 log_par <- function(name,value,...) {
-  new("logpar", name=name, value=value,fixed=FALSE)
+  new("logpar", name=name, value=value,...)
 }
 ##' Create a list of logit-transformed parameters.
 ##'
 ##' @param name the parameter name
 ##' @param value the parameter value
-##' @param fixed logical indicating whether the parameter should be fixed
-##' @param ... not used
+##' @param ... passed to constructor
 ##' @export
 ##'
-logit_par <- function(name,value,fixed=FALSE,...) {
-  new("logitpar",name=name,value=value,fixed=FALSE)
+logit_par <- function(name,value,...) {
+  new("logitpar",name=name,value=value,...)
 }
 
 ##' Create a list of untransformed parameters.
 ##'
 ##' @param name the parameter name
 ##' @param value the parameter value
-##' @param fixed logical indicating whether the parameter should be fixed
-##' @param ... not used
+##' @param ... passed to constructor
 ##' @export
 ##'
-ident_par <- function(name,value,fixed=FALSE,...) {
-  new("par", name=name, value=value,fixed=fixed,...)
+ident_par <- function(name,value,...) {
+  new("par", name=name, value=value,...)
 }
 
+##' Fix some parameters in a set.
+##'
+##' @param x parset object
+##' @param ... unquoted names of paramters to fix
+##'
+##' @export
+fix_par <- function(x,...) {
+  tofx <- as.character(match.call()[-c(1,2)])
+  if(!all(is.element(tofx,names(x)))) {
+    diff <- setdiff(tofx,names(x))
+    stop("Name(s) not found: ",paste(diff,collapse=","),call.=FALSE)
+  }
+  fx <- names(x) %in% tofx
 
-
+  x@data[fx] <- lapply(x@data[fx], function(y) {
+    y@fixed <- TRUE
+    y
+  })
+  x
+}

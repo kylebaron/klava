@@ -11,9 +11,7 @@ log_par(name, value, ...)
 
 \item{value}{the parameter value}
 
-\item{...}{not used}
-
-\item{fixed}{logical indicating whether the parameter should be fixed}
+\item{...}{passed to constructor}
 }
 \description{
 Create a list of log-transformed parameters.
