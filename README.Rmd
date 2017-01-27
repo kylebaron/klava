@@ -16,7 +16,7 @@ knitr::opts_chunk$set(comment='.',fig.path="img/README-")
 # optimhelp
 
 ## Installation
-```{r}
+```{r,eval=FALSE}
 devtools:::install_github("kylebaron/optimhelp")
 ```
 

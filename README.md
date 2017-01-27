@@ -6,13 +6,6 @@ Installation
 
     devtools:::install_github("kylebaron/optimhelp")
 
-    . Downloading GitHub repo kylebaron/optimhelp@master
-    . from URL https://api.github.com/repos/kylebaron/optimhelp/zipball/master
-
-    . Installing optimhelp
-
-    . '/Library/Frameworks/R.framework/Resources/bin/R' CMD INSTALL '/private/var/folders/5r/79dbsj0x4637ptj4hnd7kg900000gp/T/RtmpoJGcLi/devtools913b958d5d4/kylebaron-optimhelp-6036a88'
-
 Use
 ---
 
