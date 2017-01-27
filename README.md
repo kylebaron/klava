@@ -96,7 +96,7 @@ Specify parameters
 ------------------
 
 We will restrict emax to be between 0 and 1 for now. Also sending a
-fixed parameter through for fun
+fixed parameter through for fun.
 
     emax <- logit_par("emax", 0.6)
     ec50 <- log_par("ec50", 60)
@@ -194,6 +194,8 @@ Here, we'll access values from the `parset` object with `$`
       return(yhat)
     }
 
+Fit the model
+
     fit <- nls(y~prednls(p=p,x=x,emax,ec50),data=data, start=initials(p))
 
     fit
@@ -207,6 +209,8 @@ Here, we'll access values from the `parset` object with `$`
     . 
     . Number of iterations to convergence: 4 
     . Achieved convergence tolerance: 2.248e-06
+
+Work with estimates
 
     est <- graft(p,coef(fit))
 

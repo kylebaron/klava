@@ -93,7 +93,7 @@ qplot(x,y,data=data, geom="point")
 
 ## Specify parameters
 We will restrict emax to be between 0 and 1 for now.  Also sending a fixed 
-parameter through for fun
+parameter through for fun.
 ```{r}
 emax <- logit_par("emax", 0.6)
 ec50 <- log_par("ec50", 60)
@@ -177,9 +177,19 @@ prednls <- function(p, x, emax,ec50, pred=FALSE) {
   return(yhat)
 }
 
+```
+
+Fit the model
+```{r}
 fit <- nls(y~prednls(p=p,x=x,emax,ec50),data=data, start=initials(p))
 
 fit
+```
+
+
+Work with estimates
+
+```{r}
 
 est <- graft(p,coef(fit))
 
