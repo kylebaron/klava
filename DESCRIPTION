@@ -9,4 +9,4 @@ Description: Some helper classes and methods to take some of the pain out of opt
     in R.
 License: GPL (>2)
 LazyData: TRUE
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

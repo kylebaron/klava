@@ -14,4 +14,3 @@ fix_par(x, ...)
 \description{
 Fix some parameters in a set.
 }
-

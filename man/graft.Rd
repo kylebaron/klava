@@ -18,4 +18,3 @@ graft(x, y, untrans = TRUE, ...)
 \description{
 Graft new estimates into a \code{parset} object.
 }
-

@@ -16,4 +16,3 @@ log_par(name, value, ...)
 \description{
 Create a list of log-transformed parameters.
 }
-

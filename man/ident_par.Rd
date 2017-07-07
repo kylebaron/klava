@@ -16,4 +16,3 @@ ident_par(name, value, ...)
 \description{
 Create a list of untransformed parameters.
 }
-

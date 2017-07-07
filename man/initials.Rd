@@ -18,4 +18,3 @@ initials(x, ...)
 \description{
 Generate initial estimates from a parset.
 }
-

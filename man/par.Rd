@@ -2,10 +2,10 @@
 % Please edit documentation in R/classes.R
 \docType{methods}
 \name{par}
-\alias{names,par-method}
 \alias{par}
-\alias{show,par-method}
 \alias{update,par-method}
+\alias{names,par-method}
+\alias{show,par-method}
 \title{Par object class.}
 \usage{
 \S4method{update}{par}(object, value, trans = TRUE, ...)
@@ -28,4 +28,3 @@
 \description{
 Par object class.
 }
-

@@ -3,9 +3,9 @@
 \docType{methods}
 \name{tform}
 \alias{tform}
-\alias{tform,logitpar-method}
-\alias{tform,logpar-method}
 \alias{tform,par-method}
+\alias{tform,logpar-method}
+\alias{tform,logitpar-method}
 \alias{tform,parset-method}
 \title{Get the name of the transformation function.}
 \usage{
@@ -27,4 +27,3 @@ tform(x, ...)
 \description{
 Get the name of the transformation function.
 }
-

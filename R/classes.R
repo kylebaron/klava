@@ -11,11 +11,30 @@ setClass("par", slots=c(name="character", value="numeric", fixed="logical",trans
 setClass("logpar", contains="par")
 setClass("logitpar", contains="par")
 setClass("fixpar", contains="par")
+##' @export
 setClass("parset", slots=c(data="list"))
 
+
+
+
+##' @export
+##' @rdname parset
 is.parset <- function(x) any(class(x)=="parset")
+
+##' @export
+##' @rdname parset
 is.par <- function(x) any(class(x) %in% c("logpar", "logitpar", "fixpar", "par"))
 
+##' Name required parameters in a parset.
+##' 
+##' 
+##' @export
+##' 
+require_par <- function(x,what) {
+  all(what %in% names(x))
+}
+  
+  
 ##' Parset object class.
 ##'
 ##' @param object par object

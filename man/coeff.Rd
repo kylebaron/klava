@@ -12,4 +12,3 @@ coeff(x)
 \description{
 Get estimated and fixed values from a parset object.
 }
-

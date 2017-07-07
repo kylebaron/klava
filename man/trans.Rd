@@ -3,9 +3,9 @@
 \docType{methods}
 \name{trans}
 \alias{trans}
-\alias{trans,logitpar-method}
-\alias{trans,logpar-method}
 \alias{trans,par-method}
+\alias{trans,logpar-method}
+\alias{trans,logitpar-method}
 \alias{trans,parset-method}
 \title{Transform transformed parameters in a parset object.}
 \usage{
@@ -27,4 +27,3 @@ trans(x, ...)
 \description{
 Transform transformed parameters in a parset object.
 }
-

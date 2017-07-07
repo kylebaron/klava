@@ -3,9 +3,9 @@
 \docType{methods}
 \name{untrans}
 \alias{untrans}
-\alias{untrans,logitpar-method}
-\alias{untrans,logpar-method}
 \alias{untrans,par-method}
+\alias{untrans,logpar-method}
+\alias{untrans,logitpar-method}
 \alias{untrans,parset-method}
 \title{Untransform parameters in a parset object.}
 \usage{
@@ -27,4 +27,3 @@ untrans(x, ...)
 \description{
 Untransform parameters in a parset object.
 }
-

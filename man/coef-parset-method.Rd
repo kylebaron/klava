@@ -20,4 +20,3 @@ Get estimated (non-fixed) values from a parset object.
 \seealso{
 \code{\link{coeff}}
 }
-
