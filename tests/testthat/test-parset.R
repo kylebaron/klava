@@ -86,11 +86,12 @@ test_that("duplicate parameter names", {
 
 test_that("graft parameters onto parset", {
    p <- parset(log_par("foo", 2),log_par("foo2",10))
-   par <- initials(p) + 0.2
+   x <- 0.2
+   par <- initials(p) + x
    
    pp <- as.list(graft(p,par))
    
-   expect_equal(pp$foo,exp(log(2)+0.2))
-   expect_equal(pp$foo2,exp(log(10)+0.2))
+   expect_equal(pp$foo,exp(log(2) + x))
+   expect_equal(pp$foo2,exp(log(10) + x))
 
 })
