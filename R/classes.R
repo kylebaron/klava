@@ -86,7 +86,7 @@ setMethod("update", "par", function(object,value,trans=TRUE,...) {
 
 ##' @export
 ##' @rdname par
-setMethod("names", "par", function(x) x@name)
+setMethod("names", "par", function(x) unname(x@name))
 
 ##' Transform transformed parameters in a parset object.
 ##'
@@ -171,7 +171,7 @@ setMethod("as.list", "parset", function(x, ...) {
 ##' @export
 ##' @rdname parset
 setMethod("names", "parset", function(x) {
-    unlist(lapply(x@data, names))
+    unlist(lapply(x@data, names),use.names=FALSE)
 })
 
 

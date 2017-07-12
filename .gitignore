@@ -1,3 +1,6 @@
+.DS_Store
+optimhelp.Rproj
+*.tar.gz
 .Rproj.user
 .Rhistory
 .RData
