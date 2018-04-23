@@ -6,6 +6,11 @@
 \usage{
 require_par(x, what)
 }
+\arguments{
+\item{x}{a parset object}
+
+\item{what}{name of parameter to require}
+}
 \description{
 Name required parameters in a parset.
 }

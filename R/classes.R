@@ -1,7 +1,9 @@
 .logit <- function(x) {
   log(x/(1-x))
 }
+
 .alogit <- function(x) exp(x)/(1+exp(x))
+
 valu <- function(x) {
   x@value
 }
@@ -11,22 +13,13 @@ setClass("par", slots=c(name="character", value="numeric", fixed="logical",trans
 setClass("logpar", contains="par")
 setClass("logitpar", contains="par")
 setClass("fixpar", contains="par")
-##' @export
-setClass("parset", slots=c(data="list"))
 
 
-
-
-##' @export
-##' @rdname parset
-is.parset <- function(x) any(class(x)=="parset")
-
-##' @export
-##' @rdname parset
-is.par <- function(x) any(class(x) %in% c("logpar", "logitpar", "fixpar", "par"))
 
 ##' Name required parameters in a parset.
 ##' 
+##' @param x a parset object
+##' @param what name of parameter to require
 ##' 
 ##' @export
 ##' 
@@ -43,7 +36,16 @@ require_par <- function(x,what) {
 ##'
 ##' @name parset
 ##' @rdname parset
-NULL
+setClass("parset", slots=c(data="list"))
+
+##' @export
+##' @rdname parset
+is.parset <- function(x) any(class(x)=="parset")
+
+##' @export
+##' @rdname parset
+is.par <- function(x) any(class(x) %in% c("logpar", "logitpar", "fixpar", "par"))
+
 
 ##' Par object class.
 ##'

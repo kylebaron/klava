@@ -7,6 +7,7 @@ Depends: methods
 Maintainer: Kyle Baron <devgithub@fastmail.fm>
 Description: Some helper classes and methods to take some of the pain out of optimization.
     in R.
+Suggests: testthat
 License: GPL (>2)
 LazyData: TRUE
 RoxygenNote: 6.0.1
