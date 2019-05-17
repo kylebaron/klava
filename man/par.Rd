@@ -4,15 +4,9 @@
 \name{par}
 \alias{par}
 \alias{update,par-method}
-\alias{names,par-method}
-\alias{show,par-method}
 \title{Par object class.}
 \usage{
 \S4method{update}{par}(object, value, trans = TRUE, ...)
-
-\S4method{names}{par}(x)
-
-\S4method{show}{par}(object)
 }
 \arguments{
 \item{object}{par object}

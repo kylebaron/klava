@@ -7,7 +7,10 @@ Depends: methods
 Maintainer: Kyle Baron <devgithub@fastmail.fm>
 Description: Some helper classes and methods to take some of the pain out of optimization.
     in R.
+Imports: rlang
 Suggests: testthat
+Encoding: UTF-8
 License: GPL (>2)
 LazyData: TRUE
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
+
