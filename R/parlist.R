@@ -14,83 +14,152 @@ validatep <- function(...) {
   list(name = names(input), value = as.numeric(input))
 }
 
+#' Create parameter transformation objects
+#' 
+#' 
+#' @param a single named numeric value (see examples)
+#' @param fun the transformation-specific constructor function
+#' 
+#' @examples
+#' 
+#' as_par(CL = 2)
+#' 
+#' as_par_fixed(g = 9.8)
+#' 
 #' @export
 as_par <- function(..., fun = log_par) {
   x <- validatep(...)
   fun(x$name, x$value)
 }
 
+#' @rdname as_par
 #' @export
 as_par_logit <- function(...) as_par(..., fun = logit_par)
 
+#' @rdname as_par
 #' @export
-as_par_fixed <- function(...) as_par(..., fun = fix_par)
+as_par_fixed <- function(...) as_par(..., fun = fixed_par)
 
+#' @rdname as_par
+#' @export
+all_log <- function(... ) {
+  x <- list(...)
+  na <- names(x)
+  ans <- vector("list", length(na))
+  for(i in seq_along(na)) {
+    ans[[i]] <- log_par(na[[i]], x[[i]])  
+  }
+  do.call(parset,ans)
+}
+
+#' @rdname as_par
 #' @export
 as_par_ident <- function(... ) as_par(..., fun = ident_par)
 
+#' @rdname as_par
 #' @export
-log_par <- function(name,value, fixed = FALSE) {
+log_par <- function(name, value, fixed = FALSE) {
   ans <- list(value=value,tr=log,un=exp,name=name,trans = FALSE, fixed = fixed)   
   structure(ans, class="par")
 }
 
+#' @rdname as_par
 #' @export
-logit_par <- function(name,value,fixed = FALSE) {
+logit_par <- function(name, value, fixed = FALSE) {
   ans <- list(value=value,tr=logit,un=unlogit,name=name,trans = FALSE, fixed = fixed)  
   structure(ans, class="par")
 }
 
+#' @rdname as_par
 #' @export
-fix_par <- function(name,value,fixed=TRUE) {
+fixed_par <- function(name, value, fixed=TRUE) {
   ans <- list(value = value, tr = ident, un = ident, name=name, trans=FALSE, fixed = TRUE)
   structure(ans, class="par")
 }
 
+#' @rdname as_par
 #' @export
-ident_par <- function(name,value,...) {
-  ans <- fix_par(name,value)
+ident_par <- function(name,value) {
+  ans <- fixed_par(name,value)
   ans[["fixed"]] <- FALSE
   ans
 }
 
+#' @rdname as_par
 #' @export
 new_par <- function(name, value, tr, un, fixed = FALSE, trans = FALSE) {
   ans <- list(value = value, name = name, tr = tr, un = un, fixed = fixed, trans = trans)
   structure(ans,class="par")
 }
 
+#' Apply transformations to a parset object
+#' 
+#' @param x a parset object
+#' 
+#' @examples
+#' x <- quick_par(CL = log(2))
+#' 
+#' x
+#' 
+#' trans(x)
+#' 
+#' untrans(trans(x))
+#' 
 #' @export
 trans <- function(x) {
+  assert_that(is.parset(x))
   x[["value"]] <- get_trans(x)
   x[["trans"]] <- TRUE
   x
 }
 
+#' @rdname trans
 #' @export
 untrans <- function(x) {
+  assert_that(is.parset(x))
   x[["value"]] <- get_untrans(x)
   x[["trans"]] <- FALSE
   x
 }
 
+#' Get values from a parset object
+#' 
+#' @param x a parset object
+#' 
+#' @examples
+#' x <- quick_par(CL = log(1), V2 = log(20), F1 = logit(0.77))
+#' 
+#' get_trans(x)
+#' 
+#' get_untrans(x)
+#' 
 #' @export
 get_trans <- function(x) {
+  assert_that(is.parset(x))
   if(x[["trans"]])  return(x[["value"]])  
   return(mdof(x[["tr"]], x[["value"]]))
 }
 
+#' @rdname get_trans
 #' @export
 get_untrans <- function(x) {
+  assert_that(is.parset(x))
   if(!x[["trans"]])  return(x[["value"]])  
   return(mdof(x[["un"]], x[["value"]]))
 }
-
+#' @rdname get_trans
 #' @export 
 get_initials <- function(x) {
   setNames(get_trans(x),get_names(x))[which_estimated(x)]
 }
 
+#' @rdname get_trans
+#' @export
+initials <- function(x) {
+  get_initials(x)  
+}
+
+#' @rdname get_trans
 #' @export
 get_pars <- function(x) {
   fx <- x[["fixed"]]
@@ -98,43 +167,46 @@ get_pars <- function(x) {
   setNames(values, x[["names"]])
 }
 
-#' @export
 get_names <- function(x) {
   x[["names"]]
 }
 
-#' @export
 which_fixed <- function(x) {
   x[["fixed"]]  
 }
 
-#' @export
 which_estimated <- function(x) {
   !x[["fixed"]]      
 }
 
+#' Create a parset object
+#' 
+#' @param ... par objects
+#' @param trans not used
+#' 
+#' 
 #' @export
-parlist <- function(..., trans = FALSE) {
+parset <- function(..., trans = FALSE) {
   x <- list(...)
   fx <- sapply(x, "[[", "fixed", USE.NAMES=FALSE)
   tr <- lapply(x, "[[", "tr")
   un <- lapply(x, "[[", "un")
   value <- sapply(x, "[[", "value", USE.NAMES=FALSE)
   na <- sapply(x, "[[", "name", USE.NAMES=FALSE)
-  structure(list(value = value, tr = tr, un = un, fixed = fx, names = na, trans = trans), class="parlist")
+  if(any(duplicated(na))) stop("duplicate parameter names")
+  structure(list(value = value, tr = tr, un = un, fixed = fx, names = na, trans = trans), class="parset")
 }
 
 #' @export
-names.parlist <- function(x) x[["names"]]
+names.parset <- function(x) x[["names"]]
 
+#' Add a par object to a parset object
+#' 
+#' @param a parset object
+#' @param a par object
+#' 
 #' @export
-initials <- function(x) {
-  get_initials(x)  
-}
-
-
-#' @export
-parlist_add <- function(x, nw) {
+parset_add <- function(x, nw) {
   m <- length(x[["value"]]) + 1
   x[["value"]][m] <- nw[["value"]]
   x[["names"]][m] <- nw[["name"]]
@@ -148,7 +220,7 @@ parlist_add <- function(x, nw) {
 }
 
 #' @export
-print.parlist <- function(x,...) {
+print.parset <- function(x,...) {
   tr <- rep(ifelse(x[["trans"]], "t", "u"), length(x[["value"]]))
   fx <- ifelse(x[["fixed"]], "*", "")
   print(data.frame(name=x[["names"]],value=x[["value"]],tr=tr,fx=fx), row.names=FALSE)
@@ -157,21 +229,38 @@ print.parlist <- function(x,...) {
 
 #' @export
 print.par <- function(x, ...) {
-  print(parlist(x))
+  print(parset(x))
 }
 
+#' Graft new values into an existing parset object
+#' 
+#' @param x a parset object
+#' @param y numeric vector of new values
+#' 
+#' 
 #' @export
-graft <- function(x, nw) {
+graft <- function(x, y) {
   x <- trans(x)
-  x[["value"]][which_estimated(x)] <- nw
+  x[["value"]][which_estimated(x)] <- y
   mapply(optimhelp:::dof, x[["un"]], x[["value"]])
 }
 
+#' @rdname graft
 #' @export
-graft_par <- function(x,nw) {
-  setNames(graft(x,nw), x[["names"]])
+graft_par <- function(x,y) {
+  setNames(graft(x,y), x[["names"]])
 }
 
+#' Quick and easy syntax for constructing parlist 
+#' 
+#' @param ... named value, with an optional transformation of the value; 
+#' valid transformations include `log`, `logit`, `fixed`, `ident`; see
+#' examples
+#' 
+#' @examples
+#' 
+#' quick_par(CL = log(1), KA = fixed(1.0), F1 = logit(0.8))
+#' 
 #' @export
 quick_par <- function(...) {
   a <-  enexprs(...)
@@ -201,15 +290,14 @@ quick_par <- function(...) {
       fixed = "fixed"==fun[i]
     )
   }
-  x <- do.call(parlist, ans)
+  x <- do.call(parset, ans)
   x[["trans"]] <- TRUE
   x <- untrans(x)
   x
 }
 
-#' 
 #' @export
-coef.parlist <- function(object, all = FALSE, ...) {
+coef.parset <- function(object, all = FALSE, ...) {
   ans <- get_pars(object)
   if(all) {
     return(ans)
@@ -217,4 +305,16 @@ coef.parlist <- function(object, all = FALSE, ...) {
   return(ans[which_estimated(object)])
 }
 
-is.parlist <- function(x) inherits(x, "parlist")
+#' @export
+is.parset <- function(x) inherits(x, "parset")
+
+#' @export
+is.par <- function(x) inherits(x, "par")
+
+#' @method as.list parset
+#' @export
+as.list.parset <- function(x,...) {
+  ans <- as.list(get_untrans(x))
+  setNames(ans, names(x))
+}
+

@@ -6,8 +6,13 @@ els_impl <- function(dv,pred,sigma, logdv = FALSE) {
   }
 }
 
-ml_impl <- function(dv,pred,sigma, log = FALSE) {
-  -1*sum(dnorm(dv,pred,sqrt(sigma), log = TRUE),na.rm=TRUE)
+ml_impl <- function(dv,pred,sigma, logdv = FALSE) {
+  if(logdv) {
+    like <- dnorm(log(dv),log(pred),sqrt(sigma),log=TRUE)
+  } else {
+    like <- dnorm(dv,pred,sqrt(sigma),log=TRUE)    
+  }
+  return(-1*sum(like, na.rm=TRUE))
 }
 
 ols_impl <- function(dv,pred,wt=1) {
@@ -25,12 +30,12 @@ els <- function(p, theta, data, pred_name, pred = FALSE, logdv=FALSE) {
 }
 
 #' @export
-ml <- function(p, theta, data, pred_name, pred = FALSE,...) {
+ml <- function(p, theta, data, pred_name, pred = FALSE, logdv=FALSE, ...) {
   p <- graft_par(theta,p)
   mod <- param(mod, p)
   out <- mrgsim_q(mod, data, output="df")
   if(pred) return(out)
-  ml_impl(data[["DV"]], out[[pred_name]],p[["sigma"]])
+  ml_impl(data[["DV"]], out[[pred_name]],p[["sigma"]], logdv=logdv)
 }
 
 #' @export
@@ -63,17 +68,17 @@ lctran <- function(data) {
 
 #' @export
 nl_optr <- function(theta, data, 
-                   optimizer = c("newuoa", "neldermead", "optim"),
-                   pred_name = "CP", ofv = els, logdv = FALSE,
-                   pred_initial = FALSE, cov_step = FALSE,
-                   algorithm = "NLOPT_LN_NEWUOA",...) {
+                    optimizer = c("newuoa", "neldermead", "optim"),
+                    pred_name = "CP", ofv = els, logdv = FALSE,
+                    pred_initial = FALSE, cov_step = FALSE,
+                    algorithm = "NLOPT_LN_NEWUOA",...) {
   
   optimizer <- match.arg(optimizer)
   
   opt <- get(optimizer, mode = "function")
   
   fn <- deparse(substitute(ofv))
-
+  if(fn %in% c("ols", "wls")) cov_step <- FALSE
   ini <- initials(theta)
   message("Checking data ...")
   data <- lctran(data)
@@ -123,6 +128,6 @@ nl_optr <- function(theta, data,
       fit$tab <- mutate(fit$tab, se = se)
     }
   }
-
+  
   fit
 }
