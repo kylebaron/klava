@@ -1,60 +1,3 @@
-els_impl <- function(dv,pred,sigma, logdv = FALSE) {
-  if(logdv) {
-    sum(((log(dv)-log(pred))^2)/sigma + log(sigma), na.rm=TRUE)    
-  } else { 
-    sum(((dv-pred)^2)/sigma + log(sigma), na.rm=TRUE)  
-  }
-}
-
-ml_impl <- function(dv,pred,sigma, logdv = FALSE) {
-  if(logdv) {
-    like <- dnorm(log(dv),log(pred),sqrt(sigma),log=TRUE)
-  } else {
-    like <- dnorm(dv,pred,sqrt(sigma),log=TRUE)    
-  }
-  return(-1*sum(like, na.rm=TRUE))
-}
-
-ols_impl <- function(dv,pred,wt=1) {
-  res <- (dv-pred)/wt
-  sum(res^2,na.rm=TRUE)  
-}
-
-#' @export
-els <- function(p, theta, data, pred_name, pred = FALSE, logdv=FALSE) {
-  p <- graft_par(theta,p)
-  mod <- param(mod, p)
-  out <- mrgsim_q(mod, data, output="df")
-  if(pred) return(out)
-  els_impl(data[["DV"]], out[[pred_name]],p[["sigma"]], logdv = logdv)
-}
-
-#' @export
-ml <- function(p, theta, data, pred_name, pred = FALSE, logdv=FALSE, ...) {
-  p <- graft_par(theta,p)
-  mod <- param(mod, p)
-  out <- mrgsim_q(mod, data, output="df")
-  if(pred) return(out)
-  ml_impl(data[["DV"]], out[[pred_name]],p[["sigma"]], logdv=logdv)
-}
-
-#' @export
-ols <- function(p, theta, data, pred_name, pred = FALSE,...) {
-  p <- graft_par(theta,p)
-  mod <- param(mod, p)
-  out <- mrgsim_q(mod, data, output="df")
-  if(pred) return(out)
-  ols_impl(data[["DV"]], out[[pred_name]])
-}
-
-#' @export
-wls <- function(p, theta, data, pred_name, pred = FALSE,...) {
-  p <- graft_par(theta,p)
-  mod <- param(mod, p)
-  out <- mrgsim_q(mod, data, output="df")
-  if(pred) return(out)
-  ols_impl(data[["DV"]], out[[pred_name]], wt = data[["DV"]])
-}
 
 tran_upper <- c("CMT", "II", "ADDL", "EVID", "AMT", "RATE", "MDV", "TIME")
 lctran <- function(data) {
@@ -70,8 +13,7 @@ lctran <- function(data) {
 nl_optr <- function(theta, data, 
                     optimizer = c("newuoa", "neldermead", "optim"),
                     pred_name = "CP", ofv = els, logdv = FALSE,
-                    pred_initial = FALSE, cov_step = FALSE,
-                    algorithm = "NLOPT_LN_NEWUOA",...) {
+                    pred_initial = FALSE, cov_step = FALSE...) {
   
   optimizer <- match.arg(optimizer)
   
@@ -108,7 +50,7 @@ nl_optr <- function(theta, data,
   }
   fit$data <- data
   coe <- coef(theta)
-  fit$tab <- tibble(par = names(coe), start =ini, final = fit$par)
+  fit$tab <- tibble(par=names(coe), start=ini, final=fit$par)
   if(cov_step) {
     message("Trying cov step ... ", appendLF=FALSE)
     assert_that(requireNamespace("nlme"))
@@ -128,6 +70,7 @@ nl_optr <- function(theta, data,
       fit$tab <- mutate(fit$tab, se = se)
     }
   }
-  
   fit
 }
+
+
