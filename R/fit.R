@@ -1,5 +1,6 @@
 
 tran_upper <- c("CMT", "II", "ADDL", "EVID", "AMT", "RATE", "MDV", "TIME")
+
 lctran <- function(data) {
   n <- names(data)
   infrom <- is.element(n,c("MDV",tran_upper))
@@ -9,11 +10,24 @@ lctran <- function(data) {
   data
 }
 
+#' Fit a model to data
+#' 
+#' @param theta a parset object
+#' @param data a data set in data.frame format
+#' @param optimizer used to search the parameter space
+#' @param pred_name name in simulated output representing `PRED`
+#' @param ofv objective function function
+#' @param logdv logical; if `TRUE`, then the dependent variable is 
+#' log-transformed during `ofv` calculation
+#' @param cov_step if `TRUE`, then standard errors are derived using 
+#' the Hessian
+#' @param ... not currently used
+#' 
 #' @export
 nl_optr <- function(theta, data, 
                     optimizer = c("newuoa", "neldermead", "optim"),
                     pred_name = "CP", ofv = els, logdv = FALSE,
-                    pred_initial = FALSE, cov_step = FALSE...) {
+                    pred_initial = FALSE, cov_step = FALSE, ...) {
   
   optimizer <- match.arg(optimizer)
   
@@ -52,25 +66,29 @@ nl_optr <- function(theta, data,
   coe <- coef(theta)
   fit$tab <- tibble(par=names(coe), start=ini, final=fit$par)
   if(cov_step) {
-    message("Trying cov step ... ", appendLF=FALSE)
-    assert_that(requireNamespace("nlme"))
-    co <- try(
-      nlme::fdHess(fit$par, ofv, theta = theta, data = vdat, pred_name = pred_name)
-    )
-    if(inherits(co, "try-error")) {
-      warning("not successful.")  
-    } else {
-      se <- sqrt(diag(solve(co$Hessian)))
-      if(all(!is.nan(se))) {
-        message("success.")  
-      } else {
-        warning("trouble with cov step")  
-      }
-      fit$se <- se
-      fit$tab <- mutate(fit$tab, se = se)
-    }
+    fit <- cov_step(fit, ofv, theta, vdat, pred_name) 
   }
   fit
 }
 
+cov_step <- function(fit, ofv, theta, vdat, pred_name) {
+  message("Trying cov step ... ", appendLF=FALSE)
+  assert_that(requireNamespace("nlme"))
+  co <- try(
+    nlme::fdHess(fit$par, ofv, theta = theta, data = vdat, pred_name = pred_name)
+  )
+  if(inherits(co, "try-error")) {
+    warning("not successful.")  
+  } else {
+    se <- sqrt(diag(solve(co$Hessian)))
+    if(all(!is.nan(se))) {
+      message("success.")  
+    } else {
+      warning("trouble with cov step")  
+    }
+    fit$se <- se
+    fit$tab <- mutate(fit$tab, se = se)
+  }
+  return(fit)
+}
 

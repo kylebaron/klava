@@ -186,7 +186,7 @@ which_estimated <- function(x) {
 #' 
 #' 
 #' @export
-parset <- function(..., trans = FALSE) {
+parset <- function(...) {
   x <- list(...)
   fx <- sapply(x, "[[", "fixed", USE.NAMES=FALSE)
   tr <- lapply(x, "[[", "tr")
@@ -194,7 +194,9 @@ parset <- function(..., trans = FALSE) {
   value <- sapply(x, "[[", "value", USE.NAMES=FALSE)
   na <- sapply(x, "[[", "name", USE.NAMES=FALSE)
   if(any(duplicated(na))) stop("duplicate parameter names")
-  structure(list(value = value, tr = tr, un = un, fixed = fx, names = na, trans = trans), class="parset")
+  ans <- list(value = value, tr = tr, un = un, fixed = fx, names = na, 
+              trans = FALSE, scale = value)
+  structure(ans, class="parset")
 }
 
 #' @export
@@ -216,6 +218,7 @@ parset_add <- function(x, nw) {
   x[["tr"]][[m]] <- nw[["tr"]]
   x[["un"]][[m]] <- nw[["un"]]
   x[["fixed"]][m] <- nw[["fixed"]]
+  x[["scale"]][m] <- nw[["value"]]
   x
 }
 

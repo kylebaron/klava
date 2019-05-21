@@ -1,12 +1,13 @@
-els_impl <- function(dv,pred,sigma, logdv = FALSE) {
+els_impl <- function(dv,pred,sigma,logdv=FALSE) {
   if(logdv) {
-    sum(((log(dv)-log(pred))^2)/sigma + log(sigma), na.rm=TRUE)    
-  } else { 
-    sum(((dv-pred)^2)/sigma + log(sigma), na.rm=TRUE)  
+    res <- log(dv)-log(pred) 
+  } else {
+    res <- dv-pred
   }
+  0.5*sum(res^2/sigma + log(sigma), na.rm=TRUE)
 }
 
-ml_impl <- function(dv,pred,sigma, logdv = FALSE) {
+ml_impl <- function(dv,pred,sigma,logdv=FALSE) {
   if(logdv) {
     like <- dnorm(log(dv),log(pred),sqrt(sigma),log=TRUE)
   } else {
@@ -21,7 +22,7 @@ ols_impl <- function(dv,pred,wt=1) {
 }
 
 #' @export
-els <- function(p, theta, data, pred_name, pred = FALSE, logdv=FALSE) {
+els <- function(p,theta,data,pred_name,pred=FALSE,logdv=FALSE,...) {
   p <- graft_par(theta,p)
   mod <- param(mod, p)
   out <- mrgsim_q(mod, data, output="df")
@@ -30,7 +31,7 @@ els <- function(p, theta, data, pred_name, pred = FALSE, logdv=FALSE) {
 }
 
 #' @export
-ml <- function(p, theta, data, pred_name, pred = FALSE, logdv=FALSE, ...) {
+ml <- function(p,theta,data,pred_name,pred=FALSE,logdv=FALSE,...) {
   p <- graft_par(theta,p)
   mod <- param(mod, p)
   out <- mrgsim_q(mod, data, output="df")
@@ -39,7 +40,7 @@ ml <- function(p, theta, data, pred_name, pred = FALSE, logdv=FALSE, ...) {
 }
 
 #' @export
-ols <- function(p, theta, data, pred_name, pred = FALSE,...) {
+ols <- function(p,theta,data,pred_name,pred=FALSE,...) {
   p <- graft_par(theta,p)
   mod <- param(mod, p)
   out <- mrgsim_q(mod, data, output="df")
@@ -48,7 +49,7 @@ ols <- function(p, theta, data, pred_name, pred = FALSE,...) {
 }
 
 #' @export
-wls <- function(p, theta, data, pred_name, pred = FALSE,...) {
+wls <- function(p,theta,data,pred_name,pred=FALSE,...) {
   p <- graft_par(theta,p)
   mod <- param(mod, p)
   out <- mrgsim_q(mod, data, output="df")
