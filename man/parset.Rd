@@ -4,7 +4,7 @@
 \alias{parset}
 \title{Create a parset object}
 \usage{
-parset(..., trans = FALSE)
+parset(...)
 }
 \arguments{
 \item{...}{par objects}

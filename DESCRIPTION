@@ -1,10 +1,10 @@
-Package: optimhelp
+Package: klava
 Type: Package
 Title: Helper functions for optimizing in R
 Version: 0.1.0
 Author: Kyle Baron
 Depends: methods
-Maintainer: Kyle Baron <devgithub@fastmail.fm>
+Maintainer: Kyle Baron <devnull@imap.cc>
 Description: Some helper classes and methods to take some of the pain out of optimization.
     in R.
 Imports: rlang

@@ -27,7 +27,11 @@ lctran <- function(data) {
 nl_optr <- function(theta, data, 
                     optimizer = c("newuoa", "neldermead", "optim"),
                     pred_name = "CP", ofv = els, logdv = FALSE,
+                    sigma = ~sigma, 
                     pred_initial = FALSE, cov_step = FALSE, ...) {
+  
+  sigma <- as.character(sigma)[2]
+  sigma <- parse_expr(sigma)
   
   optimizer <- match.arg(optimizer)
   
@@ -52,30 +56,32 @@ nl_optr <- function(theta, data,
   vdat <- as.data.frame(valid_data_set(data,mod))
   message("Fitting with ", fn, " ...", appendLF=FALSE)
   fit <- opt(
-    ini, fn=ofv, theta = theta, data = vdat, pred_name=pred_name, logdv = logdv, ...
+    ini, fn=ofv, theta = theta, data = vdat, pred_name=pred_name, logdv = logdv,
+    sigma = sigma, ...
   ) 
   message("done.\nGenerating predicttions.")
   pr <- ofv(fit$par, theta=theta, data = vdat, pred_name = pred_name, pred=TRUE)
   data[["PRED"]] <- pr[[pred_name]]
   data[["RES"]] <- data[["DV"]] - data[["PRED"]]
   if(pred_initial) {
-    pr <- ofv(ini, theta = theta,   data = vdat, pred_name = pred_name, pred = TRUE)
+    pr <- ofv(ini, theta = theta,   data = vdat, pred_name = pred_name, sigma=sigma, pred = TRUE)
     data[["INITIAL"]] <- pr[[pred_name]]
   }
   fit$data <- data
   coe <- coef(theta)
   fit$tab <- tibble(par=names(coe), start=ini, final=fit$par)
   if(cov_step) {
-    fit <- cov_step(fit, ofv, theta, vdat, pred_name) 
+    fit <- cov_step(fit, ofv, theta, vdat, pred_name, sigma = sigma) 
   }
   fit
 }
 
-cov_step <- function(fit, ofv, theta, vdat, pred_name) {
+cov_step <- function(fit, ofv, theta, vdat, pred_name,sigma) {
   message("Trying cov step ... ", appendLF=FALSE)
   assert_that(requireNamespace("nlme"))
   co <- try(
-    nlme::fdHess(fit$par, ofv, theta = theta, data = vdat, pred_name = pred_name)
+    nlme::fdHess(fit$par, ofv, theta = theta, data = vdat, pred_name = pred_name, 
+                 sigma = sigma)
   )
   if(inherits(co, "try-error")) {
     warning("not successful.")  

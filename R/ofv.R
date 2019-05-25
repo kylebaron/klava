@@ -22,21 +22,23 @@ ols_impl <- function(dv,pred,wt=1) {
 }
 
 #' @export
-els <- function(p,theta,data,pred_name,pred=FALSE,logdv=FALSE,...) {
+els <- function(p,theta,data,pred_name,sigma,pred=FALSE,logdv=FALSE,...) {
   p <- graft_par(theta,p)
   mod <- param(mod, p)
   out <- mrgsim_q(mod, data, output="df")
   if(pred) return(out)
-  els_impl(data[["DV"]], out[[pred_name]],p[["sigma"]], logdv = logdv)
+  sig <- eval(expr=sigma, c(out,p))
+  els_impl(data[["DV"]], out[[pred_name]], sig, logdv = logdv)
 }
 
 #' @export
-ml <- function(p,theta,data,pred_name,pred=FALSE,logdv=FALSE,...) {
+ml <- function(p,theta,data,pred_name,sigma,pred=FALSE,logdv=FALSE,...) {
   p <- graft_par(theta,p)
   mod <- param(mod, p)
   out <- mrgsim_q(mod, data, output="df")
   if(pred) return(out)
-  ml_impl(data[["DV"]], out[[pred_name]],p[["sigma"]], logdv=logdv)
+  sig <- eval(expr=sigma, c(out,p))
+  ml_impl(data[["DV"]], out[[pred_name]],sig, logdv=logdv)
 }
 
 #' @export

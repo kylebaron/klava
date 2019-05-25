@@ -245,7 +245,7 @@ print.par <- function(x, ...) {
 graft <- function(x, y) {
   x <- trans(x)
   x[["value"]][which_estimated(x)] <- y
-  mapply(optimhelp:::dof, x[["un"]], x[["value"]])
+  mapply(dof, x[["un"]], x[["value"]])
 }
 
 #' @rdname graft
@@ -321,3 +321,15 @@ as.list.parset <- function(x,...) {
   setNames(ans, names(x))
 }
 
+#' @export
+add_sigma <- function(x,value=10) {
+  n <- length(value)
+  if(n==1) {
+    return(parset_add(x,as_par(sigma=value)))
+  }
+  for(i in seq(n)) {
+    na <- paste0("sigma",i)
+    x <- parset_add(x,log_par(na,value[i]))
+  }
+  x
+}

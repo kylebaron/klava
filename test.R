@@ -9,35 +9,36 @@ library(dplyr)
 library(rlang)
 library(assertthat)
 
-
-x <- rnorm(30, 10, 5)
-mu <- mean(x)
-sigma <- var(x)
-
-fun <- function(par,x) {
-  mu <- par[1]
-  -1*sum(dnorm(x, mu,sqrt(sigma), log = TRUE))
+foo <- function(x) {
+  x <- as.character(x)[2]
+  parse_expr(x)
 }
 
-fun2 <- function(par,x) {
-  mu <- par[1]
-  0.5*sum(((mu-x)/sigma)^2 + log(sigma))
-}
-
-fit <- optim(par = c(5), fn = fun2, x= x)
-
-library(nlme)
-he <- fdHess(fit$par, fun=fun2, x = x)
-se <- he$Hessian %>% solve %>% diag %>% sqrt
-sqrt(var(x)/length(x))
+foo(~a)
 
 
-x <- all_log(CL = 1.1, V2 = 3, KA = 4)
+x <- all_log(CL = 1.1, V2 = 3, KA = 4, A = 3, B=4, C=5)
 
 x <- trans(x)
 x
 untrans(x)
+data(exTheoph)
 
+b <- c(a = 1, b = 2, c = 3)
+benchmark(
+  as.list(x), 
+  list2env(as.list(x)), 
+  get_pars(x), 
+  c(exTheoph,b),
+  replications = 1000
+)
+
+ti <- tibble(x = 1)
+y <- as.list(x)
+b <- mutate(ti, D = eval(parse_expr("x+C*A"),y))
+
+eval_tidy(parse_expr("D = C*A"),ti)
+mutate(
 
 x <- quick_par(CL = log(1.1), V = log(20), KA = log(1.6), 
                 FOO = fixed(2), eps = logit(0.5))

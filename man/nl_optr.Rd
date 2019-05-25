@@ -5,8 +5,8 @@
 \title{Fit a model to data}
 \usage{
 nl_optr(theta, data, optimizer = c("newuoa", "neldermead", "optim"),
-  pred_name = "CP", ofv = els, logdv = FALSE, pred_initial = FALSE,
-  cov_step = FALSE, ...)
+  pred_name = "CP", ofv = els, logdv = FALSE, sigma = ~sigma,
+  pred_initial = FALSE, cov_step = FALSE, ...)
 }
 \arguments{
 \item{theta}{a parset object}
