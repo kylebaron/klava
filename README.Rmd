@@ -1,6 +1,5 @@
 ---
 title: "klava: parameter optimzation with mrgsolve"
-author: "kylebtwin"
 output: github_document
 ---
 
@@ -11,7 +10,7 @@ knitr::opts_chunk$set(comment='.',fig.path="img/README-")
 
 ## Installation
 ```{r,eval=FALSE}
-devtools:::install_github("kylebtwin/klava")
+devtools:::install_github("kylebaron/klava")
 ```
 
 ## Example

@@ -1,11 +1,10 @@
 klava: parameter optimzation with mrgsolve
 ================
-kylebtwin
 
 ## Installation
 
 ``` r
-devtools:::install_github("kylebtwin/klava")
+devtools:::install_github("kylebaron/klava")
 ```
 
 ## Example
