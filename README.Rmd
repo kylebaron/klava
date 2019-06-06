@@ -39,7 +39,7 @@ ggplot(data, aes(time,DV)) + geom_point() + theme_bw()
 
 Define a parameter list
 ```{r}
-theta <- all_log(CL = 0.1, V2 = 100, Q = 1, V3 = 30, KA = 1, sigma=1)
+theta <- all_log(CL = 0.5, V2 = 50, Q = 1, V3 = 30, KA = 1, sigma=1)
 ```
 
 Fit the model

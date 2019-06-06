@@ -39,7 +39,7 @@ ggplot(data, aes(time,DV)) + geom_point() + theme_bw()
 Define a parameter list
 
 ``` r
-theta <- all_log(CL = 0.1, V2 = 100, Q = 1, V3 = 30, KA = 1, sigma=1)
+theta <- all_log(CL = 0.5, V2 = 50, Q = 1, V3 = 30, KA = 1, sigma=1)
 ```
 
 Fit the
@@ -54,11 +54,7 @@ fit <- fit_nl(theta, data, pred_name= "CP", cov_step=TRUE, pred_initial=TRUE)
     . Fitting with els ...done.
     . Generating predictions.
     . Trying cov step ... Loading required namespace: nlme
-
-    . Warning in sqrt(diag(solve(co$Hessian))): NaNs produced
-
-    . Warning in cov_step(fit, ofv, theta, vdat, pred_name, sigma = sigma):
-    . trouble with cov step
+    . success.
 
 Result
 
@@ -67,14 +63,14 @@ fit$tab
 ```
 
     . # A tibble: 6 x 4
-    .   par   start    final       se
-    .   <chr> <dbl>    <dbl>    <dbl>
-    . 1 CL      0.1  0.301   NaN     
-    . 2 V2    100   24.7       0.0185
-    . 3 Q       1    1.20    NaN     
-    . 4 V3     30   49.8     NaN     
-    . 5 KA      1    1.35      0.0520
-    . 6 sigma   1    0.00485   0.394
+    .   par   start    final     se
+    .   <chr> <dbl>    <dbl>  <dbl>
+    . 1 CL      0.5  0.955   0.0308
+    . 2 V2     50   21.5     0.0565
+    . 3 Q       1    1.89    0.279 
+    . 4 V3     30    8.87    0.120 
+    . 5 KA      1    1.10    0.0791
+    . 6 sigma   1    0.00153 0.408
 
 ``` r
 ggplot(fit$data) + 
