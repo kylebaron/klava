@@ -14,6 +14,9 @@ devtools:::install_github("kylebaron/klava")
 ```
 
 ## Example
+```{r include=FALSE}
+requireNamespace("nlme")
+```
 
 ```{r , message=FALSE}
 library(dplyr)

@@ -34,7 +34,7 @@ data <- readRDS("inst/data/2cmtA.RDS")
 ggplot(data, aes(time,DV)) + geom_point() + theme_bw()
 ```
 
-![](img/README-unnamed-chunk-5-1.png)<!-- -->
+![](img/README-unnamed-chunk-6-1.png)<!-- -->
 
 Define a parameter list
 
@@ -53,8 +53,7 @@ fit <- fit_nl(theta, data, pred_name= "CP", cov_step=TRUE, pred_initial=TRUE)
 
     . Fitting with els ...done.
     . Generating predictions.
-    . Trying cov step ... Loading required namespace: nlme
-    . success.
+    . Trying cov step ... success.
 
 Result
 
@@ -80,7 +79,7 @@ ggplot(fit$data) +
   scale_y_log10() + theme_bw()
 ```
 
-![](img/README-unnamed-chunk-9-1.png)<!-- -->
+![](img/README-unnamed-chunk-10-1.png)<!-- -->
 
 ## Objective functions
 
