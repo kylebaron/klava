@@ -1,10 +1,7 @@
 ---
 title: "klava"
-author: "Kyle"
-date: "April 1, 2016"
-output: 
-  md_document:
-  variant: markdown_github
+author: "kylebtwin"
+output: github_document
 ---
 
 ```{r,echo=FALSE}
@@ -12,12 +9,80 @@ knitr::opts_chunk$set(comment='.',fig.path="img/README-")
 
 ```
 
-
-# klava
-
 ## Installation
 ```{r,eval=FALSE}
 devtools:::install_github("kylebtwin/klava")
 ```
 
+## Example
 
+```{r , message=FALSE}
+library(dplyr)
+library(mrgsolve)
+library(nloptr)
+library(ggplot2)
+library(klava)
+library(rlang)
+```
+
+
+Load an mrgsolve model
+```{r}
+mod <- modlib("pk2")
+```
+
+Grab some data
+```{r}
+data <- readRDS("inst/data/2cmtA.RDS")
+
+ggplot(data, aes(time,DV)) + geom_point() + theme_bw()
+```
+
+Define a parameter list
+```{r}
+theta <- all_log(CL = 0.1, V2 = 100, Q = 1, V3 = 30, KA = 1, sigma=1)
+```
+
+Fit the model
+
+```{r}
+fit <- fit_nl(theta, data, pred_name= "CP", cov_step=TRUE, pred_initial=TRUE)
+```
+
+Result
+```{r}
+fit$tab
+```
+
+
+
+```{r, warning=FALSE}
+ggplot(fit$data) + 
+  geom_line(aes(time,PRED),col="black", lwd=1) +
+  geom_line(aes(time,INITIAL), col = "grey", lty=2, lwd=1) + 
+  geom_point(aes(time,DV),size=3, col = "firebrick")  + 
+  scale_y_log10() + theme_bw()
+```
+
+
+## Objective functions
+
+ELS
+```{r}
+fit <- fit_nl(theta, data, pred_name= "CP", ofv=els)
+```
+
+Normal likelihood
+```{r}
+fit <- fit_nl(theta, data, pred_name= "CP", ofv=ml)
+```
+
+OLS
+```{r}
+fit <- fit_nl(theta, data, pred_name= "CP", ofv=ols)
+```
+
+WLS
+```{r}
+fit <- fit_nl(theta, data, pred_name= "CP", ofv=wls)
+```

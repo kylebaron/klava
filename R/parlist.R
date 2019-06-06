@@ -53,6 +53,17 @@ all_log <- function(... ) {
 }
 
 #' @rdname as_par
+all_ident <- function(...) {
+  x <- list(...)
+  na <- names(x)
+  ans <- vector("list", length(na))
+  for(i in seq_along(na)) {
+    ans[[i]] <- ident_par(na[[i]],x[[i]])  
+  }
+  do.call(parset,ans)
+}
+
+#' @rdname as_par
 #' @export
 as_par_ident <- function(... ) as_par(..., fun = ident_par)
 
@@ -79,9 +90,9 @@ fixed_par <- function(name, value, fixed=TRUE) {
 
 #' @rdname as_par
 #' @export
-ident_par <- function(name,value) {
+ident_par <- function(name,value,fixed=FALSE) {
   ans <- fixed_par(name,value)
-  ans[["fixed"]] <- FALSE
+  ans[["fixed"]] <- fixed
   ans
 }
 
@@ -195,7 +206,8 @@ parset <- function(...) {
   na <- sapply(x, "[[", "name", USE.NAMES=FALSE)
   if(any(duplicated(na))) stop("duplicate parameter names")
   ans <- list(value = value, tr = tr, un = un, fixed = fx, names = na, 
-              trans = FALSE, scale = value)
+              trans = FALSE, scale = value, 
+              n = length(value), nest = sum(!fx))
   structure(ans, class="parset")
 }
 
@@ -219,6 +231,8 @@ parset_add <- function(x, nw) {
   x[["un"]][[m]] <- nw[["un"]]
   x[["fixed"]][m] <- nw[["fixed"]]
   x[["scale"]][m] <- nw[["value"]]
+  x[["n"]] <- length(x[["fixed"]])
+  x[["nest"]] <- sum(!x[["fixed"]])
   x
 }
 
@@ -226,7 +240,14 @@ parset_add <- function(x, nw) {
 print.parset <- function(x,...) {
   tr <- rep(ifelse(x[["trans"]], "t", "u"), length(x[["value"]]))
   fx <- ifelse(x[["fixed"]], "*", "")
-  print(data.frame(name=x[["names"]],value=x[["value"]],tr=tr,fx=fx), row.names=FALSE)
+  print(
+    data.frame(
+      name=x[["names"]],
+      value=x[["value"]],
+      tr=tr,
+      fx=fx
+    ), row.names=FALSE
+  )
   return(invisible(NULL))
 }
 
@@ -333,3 +354,32 @@ add_sigma <- function(x,value=10) {
   }
   x
 }
+
+#' Apply transformations to new values
+#' 
+#' @param x a parset object
+#' @param y a vector of numeric values for transformation or 
+#' untransformation
+#' 
+#' @export
+apply_trans <- function(x,y) {
+  if(length(y)==x[["n"]]) {
+    return(mdof(x[["tr"]],y))
+  }
+  if(length(y)==x[["nest"]]) {
+    return(mdof(x[["tr"]][which_estimated(x)],y))  
+  }
+  stop("invalid number of values")
+}
+#' @rdname apply_trans
+#' @export
+apply_untrans <- function(x,y) {
+  if(length(y)==x[["n"]]) {
+    return(mdof(x[["un"]],y))
+  }
+  if(length(y)==x[["nest"]]) {
+    return(mdof(x[["un"]][which_estimated(x)],y))  
+  }
+  stop("invalid number of values")
+}
+

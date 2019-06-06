@@ -10,7 +10,7 @@ lctran <- function(data) {
   data
 }
 
-#' Fit a model to data
+#' Fit a model to data using functions from nloptr
 #' 
 #' @param theta a parset object
 #' @param data a data set in data.frame format
@@ -24,8 +24,8 @@ lctran <- function(data) {
 #' @param ... not currently used
 #' 
 #' @export
-nl_optr <- function(theta, data, 
-                    optimizer = c("newuoa", "neldermead", "optim"),
+fit_nl <- function(theta, data, 
+                    optimizer = c("newuoa", "neldermead"),
                     pred_name = "CP", ofv = els, logdv = FALSE,
                     sigma = ~sigma, 
                     pred_initial = FALSE, cov_step = FALSE, ...) {
@@ -59,7 +59,7 @@ nl_optr <- function(theta, data,
     ini, fn=ofv, theta = theta, data = vdat, pred_name=pred_name, logdv = logdv,
     sigma = sigma, ...
   ) 
-  message("done.\nGenerating predicttions.")
+  message("done.\nGenerating predictions.")
   pr <- ofv(fit$par, theta=theta, data = vdat, pred_name = pred_name, pred=TRUE)
   data[["PRED"]] <- pr[[pred_name]]
   data[["RES"]] <- data[["DV"]] - data[["PRED"]]
@@ -68,8 +68,9 @@ nl_optr <- function(theta, data,
     data[["INITIAL"]] <- pr[[pred_name]]
   }
   fit$data <- data
-  coe <- coef(theta)
-  fit$tab <- tibble(par=names(coe), start=ini, final=fit$par)
+  start <- get_untrans(theta)
+  na <- get_names(theta)
+  fit$tab <- tibble(par = na, start = start, final = graft_par(theta,fit$par))
   if(cov_step) {
     fit <- cov_step(fit, ofv, theta, vdat, pred_name, sigma = sigma) 
   }
@@ -80,8 +81,8 @@ cov_step <- function(fit, ofv, theta, vdat, pred_name,sigma) {
   message("Trying cov step ... ", appendLF=FALSE)
   assert_that(requireNamespace("nlme"))
   co <- try(
-    nlme::fdHess(fit$par, ofv, theta = theta, data = vdat, pred_name = pred_name, 
-                 sigma = sigma)
+    nlme::fdHess(fit$par, ofv, theta = theta, data = vdat, 
+                 pred_name = pred_name, sigma = sigma)
   )
   if(inherits(co, "try-error")) {
     warning("not successful.")  
@@ -92,8 +93,9 @@ cov_step <- function(fit, ofv, theta, vdat, pred_name,sigma) {
     } else {
       warning("trouble with cov step")  
     }
+    sedf <- tibble(se = se, par = names(coef(theta)))
+    fit$tab <- left_join(fit$tab,sedf,by="par")
     fit$se <- se
-    fit$tab <- mutate(fit$tab, se = se)
   }
   return(fit)
 }

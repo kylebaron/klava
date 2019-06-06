@@ -5,6 +5,7 @@
 \alias{as_par_logit}
 \alias{as_par_fixed}
 \alias{all_log}
+\alias{all_ident}
 \alias{as_par_ident}
 \alias{log_par}
 \alias{logit_par}
@@ -21,6 +22,8 @@ as_par_fixed(...)
 
 all_log(...)
 
+all_ident(...)
+
 as_par_ident(...)
 
 log_par(name, value, fixed = FALSE)
@@ -29,7 +32,7 @@ logit_par(name, value, fixed = FALSE)
 
 fixed_par(name, value, fixed = TRUE)
 
-ident_par(name, value)
+ident_par(name, value, fixed = FALSE)
 
 new_par(name, value, tr, un, fixed = FALSE, trans = FALSE)
 }
