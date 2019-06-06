@@ -1,5 +1,5 @@
 ---
-title: "klava"
+title: "klava: parameter optimzation with mrgsolve"
 author: "kylebtwin"
 output: github_document
 ---
