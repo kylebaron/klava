@@ -36,6 +36,29 @@ ggplot(data, aes(time,DV)) + geom_point() + theme_bw()
 
 ![](img/README-unnamed-chunk-6-1.png)<!-- -->
 
+The data is more or less in NONMEM-type format
+
+``` r
+data
+```
+
+    . # A tibble: 13 x 11
+    .       ID  time  evid   mdv   amt   cmt    ss    ii  addl  rate    DV
+    .    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+    .  1     1  0        1     1   100     1     0     0     0     0  0   
+    .  2     1  0.25     0     0     0     0     0     0     0     0  1.06
+    .  3     1  1        0     0     0     0     0     0     0     0  2.90
+    .  4     1  2        0     0     0     0     0     0     0     0  3.57
+    .  5     1  3        0     0     0     0     0     0     0     0  3.49
+    .  6     1  4        0     0     0     0     0     0     0     0  3.25
+    .  7     1  5        0     0     0     0     0     0     0     0  3.18
+    .  8     1  6        0     0     0     0     0     0     0     0  2.92
+    .  9     1 12        0     0     0     0     0     0     0     0  2.17
+    . 10     1 18        0     0     0     0     0     0     0     0  1.78
+    . 11     1 24        0     0     0     0     0     0     0     0  1.53
+    . 12     1 30        0     0     0     0     0     0     0     0  1.27
+    . 13     1 36        0     0     0     0     0     0     0     0  1.00
+
 Define a parameter
 list
 
@@ -76,21 +99,21 @@ fit$tab
 plot(fit)
 ```
 
-![](img/README-unnamed-chunk-10-1.png)<!-- -->
+![](img/README-unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
 ggplot(fit$data, aes(time,RES)) + geom_point() + 
   geom_hline(yintercept=0) + theme_bw()
 ```
 
-![](img/README-unnamed-chunk-11-1.png)<!-- -->
+![](img/README-unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 ggplot(fit$data, aes(PRED,DV)) + geom_point() + 
   geom_abline(intercept = 0, slope = 1) + theme_bw()
 ```
 
-![](img/README-unnamed-chunk-12-1.png)<!-- -->
+![](img/README-unnamed-chunk-13-1.png)<!-- -->
 
 ## Objective functions
 

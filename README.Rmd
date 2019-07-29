@@ -40,6 +40,12 @@ data <- readRDS("inst/dat/2cmtA.RDS")
 ggplot(data, aes(time,DV)) + geom_point() + theme_bw()
 ```
 
+The data is more or less in NONMEM-type format
+```{r}
+data
+```
+
+
 Define a parameter list
 ```{r}
 theta <- all_log(CL = 0.5, V2 = 50, Q = 1.1, V3 = 30, KA = 1.1, sigma=1.1)
