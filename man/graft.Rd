@@ -3,11 +3,16 @@
 \name{graft}
 \alias{graft}
 \alias{graft_par}
+\alias{graft_in}
 \title{Graft new values into an existing parset object}
 \usage{
 graft(x, y)
 
 graft_par(x, y)
+
+graft_in(x, y)
+
+graft_in(x, y)
 }
 \arguments{
 \item{x}{a parset object}

@@ -16,7 +16,6 @@ validatep <- function(...) {
 
 #' Create parameter transformation objects
 #' 
-#' 
 #' @param a single named numeric value (see examples)
 #' @param fun the transformation-specific constructor function
 #' 
@@ -274,6 +273,33 @@ graft <- function(x, y) {
 graft_par <- function(x,y) {
   setNames(graft(x,y), x[["names"]])
 }
+
+#' @rdname graft
+#' @export
+graft_in <- function(x, y) {
+  x <- trans(x)
+  x[["value"]][which_estimated(x)] <- y
+  x
+}
+#' @rdname graft
+#' @export
+graft_in <- function(x, y) {
+  x <- trans(x)
+  x[["value"]][which_estimated(x)] <- y
+  x
+}
+
+graft_in_t <- function(x,y) get_trans(graft_in(x,y))
+graft_in_u <- function(x,y) get_untrans(graft_in(x,y))
+
+apply_untr <- function(x,y) {
+  if(length(y) != x[["n"]]) {
+    stop()  
+  }
+  x[["value"]] <- y
+  get_untrans(x)
+}
+
 
 #' Quick and easy syntax for constructing parlist 
 #' 

@@ -75,23 +75,51 @@ fit_nl <- function(theta, data, mod,
   ) 
   message("done.\nGenerating predictions.")
   pr <- simlike(fit$par,theta=theta,data=vdat,mod=mod,
-            pred_name=pred_name,pred=TRUE)
+                pred_name=pred_name,pred=TRUE)
   data[["PRED"]] <- pr[[pred_name]]
   data[["RES"]] <- data[["DV"]] - data[["PRED"]]
   if(pred_initial) {
     pr <- simlike(ini,theta=theta,data=vdat,mod=mod, ofv=ofv,
-              pred_name=pred_name,sigma=sigma,pred=TRUE)
+                  pred_name=pred_name,sigma=sigma,pred=TRUE)
     data[["INITIAL"]] <- pr[[pred_name]]
   }
   fit$data <- data
   start <- get_untrans(theta)
   na <- get_names(theta)
+  fit$untab <- tibble(
+    par = na, 
+    start = get_trans(theta), 
+    final = get_trans(graft_in(theta,fit$par))
+  )
   fit$tab <- tibble(par = na, start = start, final = graft_par(theta,fit$par))
   if(cov_step) {
-    fit <- cov_step(fit,ofv,theta,vdat,mod,pred_name,sigma=sigma) 
+    fit <- cov_step(fit,ofv,theta,vdat,mod,pred_name,sigma=sigma)
+    fit$untab[["lb"]] <- fit$untab[["final"]] - 1.96*fit$untab[["se"]]
+    fit$untab[["ub"]] <- fit$untab[["final"]] + 1.96*fit$untab[["se"]]
+    fit$tab[["lb"]] <- apply_untrans(theta,fit$untab[["lb"]])
+    fit$tab[["ub"]] <- apply_untrans(theta,fit$untab[["ub"]])
   }
-  fit
+  structure(fit, class=c("klv_fit", "list"))
 }
+
+#' @export
+plot.klv_fit <- function(x, log=TRUE) {
+  
+  
+  p <- 
+    ggplot(x$data) + 
+    geom_line(aes(time,PRED),lwd=0.8) +
+    geom_point(aes(time,DV), col = "blue3", size = 3) + 
+    theme_bw()
+  if(log) p <- p + scale_y_log10()
+  
+  if("INITIAL" %in% names(x$data)) {
+    p <- p + geom_line(aes(time,INITIAL),lty=2,col="darkgrey",lwd=0.8)
+  }
+
+  p
+}
+
 
 cov_step <- function(fit,ofv,theta,vdat,mod,pred_name,sigma) {
   message("Trying cov step ... ", appendLF=FALSE)
@@ -114,8 +142,7 @@ cov_step <- function(fit,ofv,theta,vdat,mod,pred_name,sigma) {
       warning("trouble with cov step")  
     }
     sedf <- tibble(se = se, par = names(coef(theta)))
-    fit$tab <- left_join(fit$tab,sedf,by="par")
-    fit$se <- se
+    fit$untab <- left_join(fit$untab,sedf,by="par")
   }
   return(fit)
 }

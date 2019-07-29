@@ -60,17 +60,25 @@ fit$tab
 
 
 ```{r, warning=FALSE}
-ggplot(fit$data) + 
-  geom_line(aes(time,PRED),col="black", lwd=1) +
-  geom_line(aes(time,INITIAL), col = "grey", lty=2, lwd=1) + 
-  geom_point(aes(time,DV),size=3, col = "firebrick")  + 
-  scale_y_log10() + theme_bw()
+plot(fit)
+```
+
+
+```{r,warning = FALSE}
+ggplot(fit$data, aes(time,RES)) + geom_point() + 
+  geom_hline(yintercept=0) + theme_bw()
+```
+
+
+```{r, warning = FALSE}
+ggplot(fit$data, aes(PRED,DV)) + geom_point() + 
+  geom_abline(intercept = 0, slope = 1) + theme_bw()
 ```
 
 
 ## Objective functions
 
-ELS
+Extended Least Squares - ELS
 ```{r}
 fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=els)
 ```
@@ -80,12 +88,12 @@ Normal likelihood
 fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=ml)
 ```
 
-OLS
+Ordinary Least Squares - OLS
 ```{r}
 fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=ols)
 ```
 
-WLS
+Weighted Least Squares - WLS
 ```{r}
 fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=wls)
 ```

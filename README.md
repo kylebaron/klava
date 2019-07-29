@@ -29,24 +29,25 @@ mod <- modlib("pk2")
 Grab some data
 
 ``` r
-data <- readRDS("inst/data/2cmtA.RDS")
+data <- readRDS("inst/dat/2cmtA.RDS")
 
 ggplot(data, aes(time,DV)) + geom_point() + theme_bw()
 ```
 
 ![](img/README-unnamed-chunk-6-1.png)<!-- -->
 
-Define a parameter list
+Define a parameter
+list
 
 ``` r
-theta <- all_log(CL = 0.5, V2 = 50, Q = 1, V3 = 30, KA = 1, sigma=1)
+theta <- all_log(CL = 0.5, V2 = 50, Q = 1.1, V3 = 30, KA = 1.1, sigma=1.1)
 ```
 
-Fit the
-model
+Fit the model
 
 ``` r
-fit <- fit_nl(theta, data, pred_name= "CP", cov_step=TRUE, pred_initial=TRUE)
+fit <- fit_nl(theta, data, mod = mod, pred_name= "CP", cov_step=TRUE,
+              pred_initial=TRUE)
 ```
 
     . Checking data ...
@@ -61,32 +62,42 @@ Result
 fit$tab
 ```
 
-    . # A tibble: 6 x 4
-    .   par   start    final     se
-    .   <chr> <dbl>    <dbl>  <dbl>
-    . 1 CL      0.5  0.955   0.0308
-    . 2 V2     50   21.5     0.0565
-    . 3 Q       1    1.89    0.279 
-    . 4 V3     30    8.87    0.120 
-    . 5 KA      1    1.10    0.0791
-    . 6 sigma   1    0.00153 0.408
+    . # A tibble: 6 x 5
+    .   par   start    final        lb       ub
+    .   <chr> <dbl>    <dbl>     <dbl>    <dbl>
+    . 1 CL      0.5  0.955    0.900     1.01   
+    . 2 V2     50   21.5     19.2      24.0    
+    . 3 Q       1.1  1.89     1.10      3.27   
+    . 4 V3     30    8.87     7.01     11.2    
+    . 5 KA      1.1  1.10     0.941     1.28   
+    . 6 sigma   1.1  0.00153  0.000687  0.00340
 
 ``` r
-ggplot(fit$data) + 
-  geom_line(aes(time,PRED),col="black", lwd=1) +
-  geom_line(aes(time,INITIAL), col = "grey", lty=2, lwd=1) + 
-  geom_point(aes(time,DV),size=3, col = "firebrick")  + 
-  scale_y_log10() + theme_bw()
+plot(fit)
 ```
 
 ![](img/README-unnamed-chunk-10-1.png)<!-- -->
 
-## Objective functions
+``` r
+ggplot(fit$data, aes(time,RES)) + geom_point() + 
+  geom_hline(yintercept=0) + theme_bw()
+```
 
-ELS
+![](img/README-unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
-fit <- fit_nl(theta, data, pred_name= "CP", ofv=els)
+ggplot(fit$data, aes(PRED,DV)) + geom_point() + 
+  geom_abline(intercept = 0, slope = 1) + theme_bw()
+```
+
+![](img/README-unnamed-chunk-12-1.png)<!-- -->
+
+## Objective functions
+
+Extended Least Squares - ELS
+
+``` r
+fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=els)
 ```
 
     . Checking data ...
@@ -97,7 +108,7 @@ fit <- fit_nl(theta, data, pred_name= "CP", ofv=els)
 Normal likelihood
 
 ``` r
-fit <- fit_nl(theta, data, pred_name= "CP", ofv=ml)
+fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=ml)
 ```
 
     . Checking data ...
@@ -105,10 +116,10 @@ fit <- fit_nl(theta, data, pred_name= "CP", ofv=ml)
     . Fitting with ml ...done.
     . Generating predictions.
 
-OLS
+Ordinary Least Squares - OLS
 
 ``` r
-fit <- fit_nl(theta, data, pred_name= "CP", ofv=ols)
+fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=ols)
 ```
 
     . Checking data ...
@@ -116,10 +127,10 @@ fit <- fit_nl(theta, data, pred_name= "CP", ofv=ols)
     . Fitting with ols ...done.
     . Generating predictions.
 
-WLS
+Weighted Least Squares - WLS
 
 ``` r
-fit <- fit_nl(theta, data, pred_name= "CP", ofv=wls)
+fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=wls)
 ```
 
     . Checking data ...
