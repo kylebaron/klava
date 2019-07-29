@@ -36,8 +36,8 @@ err <- function(sigma, ipred) {
 
 el <- nl_optr(
   thetas, df, pred_name = "IPRED", 
-  optimizer="newuoa", pred_initial = TRUE,
-  ofv = ml, cov_step=TRUE,  logdv=TRUE,
+  optimizer="neldermead", pred_initial = TRUE,
+  ofv = els, cov_step=TRUE,  logdv=TRUE,
   sigma = ~sigma
 )
 

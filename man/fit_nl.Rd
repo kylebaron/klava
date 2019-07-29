@@ -4,7 +4,7 @@
 \alias{fit_nl}
 \title{Fit a model to data using functions from nloptr}
 \usage{
-fit_nl(theta, data, optimizer = c("newuoa", "neldermead"),
+fit_nl(theta, data, mod, optimizer = c("newuoa", "neldermead"),
   pred_name = "CP", ofv = els, logdv = FALSE, sigma = ~sigma,
   pred_initial = FALSE, cov_step = FALSE, ...)
 }
@@ -12,6 +12,8 @@ fit_nl(theta, data, optimizer = c("newuoa", "neldermead"),
 \item{theta}{a parset object}
 
 \item{data}{a data set in data.frame format}
+
+\item{mod}{a mrgsolve model object}
 
 \item{optimizer}{used to search the parameter space}
 
@@ -22,10 +24,16 @@ fit_nl(theta, data, optimizer = c("newuoa", "neldermead"),
 \item{logdv}{logical; if `TRUE`, then the dependent variable is 
 log-transformed during `ofv` calculation}
 
+\item{sigma}{a one-sided formula containing an expression for the residual
+error variance}
+
+\item{pred_initial}{if `TRUE`, a column is added to the output called
+`INITIAL` which is a model prediction at the initial parameter estimates}
+
 \item{cov_step}{if `TRUE`, then standard errors are derived using 
 the Hessian}
 
-\item{...}{not currently used}
+\item{...}{passed to `ofv`}
 }
 \description{
 Fit a model to data using functions from nloptr

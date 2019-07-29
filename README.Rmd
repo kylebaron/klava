@@ -35,20 +35,21 @@ mod <- modlib("pk2")
 
 Grab some data
 ```{r}
-data <- readRDS("inst/data/2cmtA.RDS")
+data <- readRDS("inst/dat/2cmtA.RDS")
 
 ggplot(data, aes(time,DV)) + geom_point() + theme_bw()
 ```
 
 Define a parameter list
 ```{r}
-theta <- all_log(CL = 0.5, V2 = 50, Q = 1, V3 = 30, KA = 1, sigma=1)
+theta <- all_log(CL = 0.5, V2 = 50, Q = 1.1, V3 = 30, KA = 1.1, sigma=1.1)
 ```
 
 Fit the model
 
 ```{r}
-fit <- fit_nl(theta, data, pred_name= "CP", cov_step=TRUE, pred_initial=TRUE)
+fit <- fit_nl(theta, data, mod = mod, pred_name= "CP", cov_step=TRUE,
+              pred_initial=TRUE)
 ```
 
 Result
@@ -71,20 +72,20 @@ ggplot(fit$data) +
 
 ELS
 ```{r}
-fit <- fit_nl(theta, data, pred_name= "CP", ofv=els)
+fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=els)
 ```
 
 Normal likelihood
 ```{r}
-fit <- fit_nl(theta, data, pred_name= "CP", ofv=ml)
+fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=ml)
 ```
 
 OLS
 ```{r}
-fit <- fit_nl(theta, data, pred_name= "CP", ofv=ols)
+fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=ols)
 ```
 
 WLS
 ```{r}
-fit <- fit_nl(theta, data, pred_name= "CP", ofv=wls)
+fit <- fit_nl(theta, data, mod, pred_name= "CP", ofv=wls)
 ```
