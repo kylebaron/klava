@@ -67,7 +67,8 @@ fit_nl <- function(theta, data, mod,
     data[["mdv"]] <- as.integer(data[[evid_col]] !=0)  
   }
   data <- mutate(data, DV = ifelse(.data[["mdv"]]==1, NA_real_, .data[["DV"]]))
-  vdat <- as.data.frame(valid_data_set(data,mod))
+  vdat <- valid_data_set(data,mod)
+  vdat <- as.data.frame(unclass(vdat))
   message("Fitting with ", fn, " ...", appendLF=FALSE)
   fit <- opt(
     ini, fn=simlike, theta = theta, data = vdat, mod=mod, 
@@ -83,15 +84,19 @@ fit_nl <- function(theta, data, mod,
                   pred_name=pred_name,sigma=sigma,pred=TRUE)
     data[["INITIAL"]] <- pr[[pred_name]]
   }
-  fit$data <- data
-  start <- get_untrans(theta)
+  res <- graft_in(theta,fit$par)
   na <- get_names(theta)
+  start <- get_untrans(theta)
+  fit$fixed <- theta[["fixed"]]
+  fit$upar <- coef(res)
+  names(fit$par) <- names(fit$upar)
+  fit$data <- data
   fit$untab <- tibble(
     par = na, 
     start = get_trans(theta), 
-    final = get_trans(graft_in(theta,fit$par))
+    final = get_trans(res)
   )
-  fit$tab <- tibble(par = na, start = start, final = graft_par(theta,fit$par))
+  fit$tab <- tibble(par = na, start = start, final = get_untrans(res))
   if(cov_step) {
     fit <- cov_step(fit,ofv,theta,vdat,mod,pred_name,sigma=sigma)
     fit$untab[["lb"]] <- fit$untab[["final"]] - 1.96*fit$untab[["se"]]
@@ -103,9 +108,10 @@ fit_nl <- function(theta, data, mod,
 }
 
 #' @export
-plot.klv_fit <- function(x, log=TRUE) {
-  
-  
+plot.klv_fit <- function(x, y = NULL, log=TRUE, ...) {
+  if(!requireNamespace("ggplot2")) {
+    stop("could not load ggplot2 namespace", call. = FALSE)  
+  }
   p <- 
     ggplot(x$data) + 
     geom_line(aes(time,PRED),lwd=0.8) +
@@ -116,10 +122,19 @@ plot.klv_fit <- function(x, log=TRUE) {
   if("INITIAL" %in% names(x$data)) {
     p <- p + geom_line(aes(time,INITIAL),lty=2,col="darkgrey",lwd=0.8)
   }
-
+  
   p
 }
 
+#' @export
+coef.klv_fit <- function(object, all = FALSE, ...) {
+  if(all) {
+    ans <- object[["tab"]][["final"]]
+    names(ans) <- object[["tab"]][["par"]]
+    return(ans)
+  }
+  return(object[["upar"]])
+}
 
 cov_step <- function(fit,ofv,theta,vdat,mod,pred_name,sigma) {
   message("Trying cov step ... ", appendLF=FALSE)

@@ -3,3 +3,4 @@ img/
 Makefile
 ^.*\.Rproj$
 ^\.Rproj\.user$
+inst/readme

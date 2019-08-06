@@ -14,8 +14,8 @@ library(dplyr)
 library(mrgsolve)
 library(nloptr)
 library(ggplot2)
-library(klava)
 library(rlang)
+library(klava)
 ```
 
 Load an mrgsolve model
@@ -26,7 +26,7 @@ mod <- modlib("pk2")
 
     . Building pk2 ... done.
 
-Grab some data
+# Grab some data
 
 ``` r
 data <- readRDS("inst/dat/2cmtA.RDS")
@@ -59,14 +59,70 @@ data
     . 12     1 30        0     0     0     0     0     0     0     0  1.27
     . 13     1 36        0     0     0     0     0     0     0     0  1.00
 
-Define a parameter
-list
+# Define a parameter list
 
 ``` r
 theta <- all_log(CL = 0.5, V2 = 50, Q = 1.1, V3 = 30, KA = 1.1, sigma=1.1)
 ```
 
-Fit the model
+This is a self-transforming vector
+
+``` r
+theta
+```
+
+    .   name value tr fx
+    .     CL   0.5  u   
+    .     V2  50.0  u   
+    .      Q   1.1  u   
+    .     V3  30.0  u   
+    .     KA   1.1  u   
+    .  sigma   1.1  u
+
+``` r
+trans(theta)
+```
+
+    .   name       value tr fx
+    .     CL -0.69314718  t   
+    .     V2  3.91202301  t   
+    .      Q  0.09531018  t   
+    .     V3  3.40119738  t   
+    .     KA  0.09531018  t   
+    .  sigma  0.09531018  t
+
+That also supports fixed values
+
+``` r
+foo <- quick_par(CL = log(1), KA = fixed(1.1), F1 = logit(0.8))
+
+foo
+```
+
+    .  name value tr fx
+    .    CL   1.0  u   
+    .    KA   1.1  u  *
+    .    F1   0.8  u
+
+``` r
+trans(foo)
+```
+
+    .  name    value tr fx
+    .    CL 0.000000  t   
+    .    KA 1.100000  t  *
+    .    F1 1.386294  t
+
+``` r
+untrans(trans(foo))
+```
+
+    .  name value tr fx
+    .    CL   1.0  u   
+    .    KA   1.1  u  *
+    .    F1   0.8  u
+
+# Fit the model
 
 ``` r
 fit <- fit_nl(theta, data, mod = mod, pred_name= "CP", cov_step=TRUE,
@@ -95,25 +151,27 @@ fit$tab
     . 5 KA      1.1  1.10     0.941     1.28   
     . 6 sigma   1.1  0.00153  0.000687  0.00340
 
+# Diagnostics
+
 ``` r
 plot(fit)
 ```
 
-![](img/README-unnamed-chunk-11-1.png)<!-- -->
+![](img/README-unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 ggplot(fit$data, aes(time,RES)) + geom_point() + 
   geom_hline(yintercept=0) + theme_bw()
 ```
 
-![](img/README-unnamed-chunk-12-1.png)<!-- -->
+![](img/README-unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 ggplot(fit$data, aes(PRED,DV)) + geom_point() + 
   geom_abline(intercept = 0, slope = 1) + theme_bw()
 ```
 
-![](img/README-unnamed-chunk-13-1.png)<!-- -->
+![](img/README-unnamed-chunk-16-1.png)<!-- -->
 
 ## Objective functions
 

@@ -7,7 +7,7 @@ Depends: methods
 Maintainer: Kyle Baron <devnull@imap.cc>
 Description: Some helper classes and methods to take some of the pain out of optimization.
     in R.
-Imports: rlang,assertthat,mrgsolve,dplyr,nlme
+Imports: rlang,assertthat,mrgsolve,dplyr,nlme,ggplot2
 Suggests: testthat
 Encoding: UTF-8
 License: GPL (>2)

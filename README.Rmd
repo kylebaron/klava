@@ -4,8 +4,7 @@ output: github_document
 ---
 
 ```{r,echo=FALSE}
-knitr::opts_chunk$set(comment='.',fig.path="img/README-")
-
+knitr::opts_chunk$set(comment='.',fig.path="inst/img/README-")
 ```
 
 ## Installation
@@ -23,8 +22,8 @@ library(dplyr)
 library(mrgsolve)
 library(nloptr)
 library(ggplot2)
-library(klava)
 library(rlang)
+library(klava)
 ```
 
 
@@ -33,7 +32,7 @@ Load an mrgsolve model
 mod <- modlib("pk2")
 ```
 
-Grab some data
+# Grab some data
 ```{r}
 data <- readRDS("inst/dat/2cmtA.RDS")
 
@@ -46,12 +45,33 @@ data
 ```
 
 
-Define a parameter list
+# Define a parameter list
 ```{r}
 theta <- all_log(CL = 0.5, V2 = 50, Q = 1.1, V3 = 30, KA = 1.1, sigma=1.1)
 ```
 
-Fit the model
+This is a self-transforming vector
+```{r}
+theta
+```
+
+```{r}
+trans(theta)
+```
+
+That also supports fixed values
+```{r}
+foo <- quick_par(CL = log(1), KA = fixed(1.1), F1 = logit(0.8))
+
+foo
+
+trans(foo)
+
+untrans(trans(foo))
+```
+
+
+# Fit the model
 
 ```{r}
 fit <- fit_nl(theta, data, mod = mod, pred_name= "CP", cov_step=TRUE,
@@ -63,7 +83,7 @@ Result
 fit$tab
 ```
 
-
+# Diagnostics
 
 ```{r, warning=FALSE}
 plot(fit)

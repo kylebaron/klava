@@ -3,7 +3,7 @@
 \name{trans}
 \alias{trans}
 \alias{untrans}
-\title{Apply transformations to a parset object}
+\title{Transform and un-transform a parset object}
 \usage{
 trans(x)
 
@@ -13,7 +13,7 @@ untrans(x)
 \item{x}{a parset object}
 }
 \description{
-Apply transformations to a parset object
+Transform and un-transform a parset object
 }
 \examples{
 x <- quick_par(CL = log(2))

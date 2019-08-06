@@ -5,14 +5,14 @@
 \alias{apply_untrans}
 \title{Apply transformations to new values}
 \usage{
-apply_trans(x, y)
+apply_trans(x, newdata)
 
-apply_untrans(x, y)
+apply_untrans(x, newdata)
 }
 \arguments{
 \item{x}{a parset object}
 
-\item{y}{a vector of numeric values for transformation or 
+\item{newdata}{a vector of numeric values for transformation or 
 untransformation}
 }
 \description{

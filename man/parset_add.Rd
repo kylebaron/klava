@@ -7,9 +7,9 @@
 parset_add(x, nw)
 }
 \arguments{
-\item{a}{parset object}
+\item{x}{a parset object}
 
-\item{a}{par object}
+\item{nw}{a par object}
 }
 \description{
 Add a par object to a parset object

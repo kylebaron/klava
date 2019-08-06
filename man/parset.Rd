@@ -8,8 +8,6 @@ parset(...)
 }
 \arguments{
 \item{...}{par objects}
-
-\item{trans}{not used}
 }
 \description{
 Create a parset object

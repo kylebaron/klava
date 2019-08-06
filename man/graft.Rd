@@ -11,8 +11,6 @@ graft(x, y)
 graft_par(x, y)
 
 graft_in(x, y)
-
-graft_in(x, y)
 }
 \arguments{
 \item{x}{a parset object}
