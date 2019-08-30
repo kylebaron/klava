@@ -34,7 +34,7 @@ data <- readRDS("inst/dat/2cmtA.RDS")
 ggplot(data, aes(time,DV)) + geom_point() + theme_bw()
 ```
 
-![](img/README-unnamed-chunk-6-1.png)<!-- -->
+![](inst/img/README-unnamed-chunk-6-1.png)<!-- -->
 
 The data is more or less in NONMEM-type format
 
@@ -157,21 +157,21 @@ fit$tab
 plot(fit)
 ```
 
-![](img/README-unnamed-chunk-14-1.png)<!-- -->
+![](inst/img/README-unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 ggplot(fit$data, aes(time,RES)) + geom_point() + 
   geom_hline(yintercept=0) + theme_bw()
 ```
 
-![](img/README-unnamed-chunk-15-1.png)<!-- -->
+![](inst/img/README-unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 ggplot(fit$data, aes(PRED,DV)) + geom_point() + 
   geom_abline(intercept = 0, slope = 1) + theme_bw()
 ```
 
-![](img/README-unnamed-chunk-16-1.png)<!-- -->
+![](inst/img/README-unnamed-chunk-16-1.png)<!-- -->
 
 ## Objective functions
 
