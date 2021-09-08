@@ -42,7 +42,7 @@ The data is more or less in NONMEM-type format
 data
 ```
 
-    . # A tibble: 13 x 11
+    . # A tibble: 13 × 11
     .       ID  time  evid   mdv   amt   cmt    ss    ii  addl  rate    DV
     .    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
     .  1     1  0        1     1   100     1     0     0     0     0  0   
@@ -141,7 +141,7 @@ Result
 fit$tab
 ```
 
-    . # A tibble: 6 x 5
+    . # A tibble: 6 × 5
     .   par   start    final        lb       ub
     .   <chr> <dbl>    <dbl>     <dbl>    <dbl>
     . 1 CL      0.5  0.955    0.900     1.01   
